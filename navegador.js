@@ -7,6 +7,7 @@ let modoGlobal = false;
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  document.getElementById("buscarTitulo")?.addEventListener("input", aplicarFiltros);
 document.getElementById("buscarRef")?.addEventListener("input", aplicarFiltros);
   document.getElementById("buscarModelo")?.addEventListener("input", aplicarFiltros);
   document.getElementById("filtroTipo")?.addEventListener("change", aplicarFiltros);
@@ -363,6 +364,7 @@ function mostrarResultados(lista) {
 
 // ⚡ Función para filtrar sin reconstruir el DOM
 function filtrarCards() {
+  const tit = (document.getElementById("buscarTitulo")?.value || "").toLowerCase().trim();
   const ref = (document.getElementById("buscarRef")?.value || "").toLowerCase().trim();
   const modelo = (document.getElementById("buscarModelo")?.value || "").toLowerCase().trim();
   const tipo = document.getElementById("filtroTipo")?.value || "";
@@ -370,13 +372,14 @@ function filtrarCards() {
   const palabras = tagsActivos.map(t => t.toLowerCase());
 
   cardsDOM.forEach(card => {
+    const coincideTitulo = !tit || card.dataset.nombreprod.includes(tit);
     const coincideRef = !ref || card.dataset.refinterna.includes(ref);
     const coincideModelo = !modelo || card.dataset.modelo.includes(modelo);
     const coincideTipo = !tipo || card.dataset.tipoprod === tipo;
     const coincideUnidad = !unidad || card.dataset.unidad === unidad;
     const coincidePalabras = palabras.length === 0 || palabras.every(p => card.dataset.palclave.includes(p));
 
-    card.style.display = (coincideRef && coincideModelo && coincideTipo && coincideUnidad && coincidePalabras) ? "block" : "none";
+    card.style.display = (coincideTitulo && coincideRef && coincideModelo && coincideTipo && coincideUnidad && coincidePalabras) ? "block" : "none";
   });
 }
 
@@ -385,6 +388,7 @@ async function aplicarFiltros() {
   console.log("🔥 aplicarFiltros ejecutado");
   console.log("modoGlobal:", modoGlobal);
 
+  const tit = document.getElementsById("buscarTitulo")?.value.toLowerCase().trim() || "";
   const ref = document.getElementById("buscarRef")?.value.toLowerCase().trim() || "";
   const modelo = document.getElementById("buscarModelo")?.value.toLowerCase().trim() || "";
   const tipo = document.getElementById("filtroTipo")?.value || "";
@@ -401,6 +405,7 @@ async function aplicarFiltros() {
     try {
 
       const params = new URLSearchParams({
+        tit,
         ref,
         modelo,
         tipo,
@@ -438,6 +443,9 @@ mostrarResultados(data);
 
   const filtrados = resultadosActuales.filter(r => {
 
+    const coincideTitulo =
+      !tit || String(r.nombreprod || "").toLowerCase().includes(tit);
+
     const coincideRef =
       !ref || String(r.refinterna || "").toLowerCase().includes(ref);
 
@@ -462,7 +470,8 @@ mostrarResultados(data);
         palabrasRegistro.some(pal => pal.includes(tag))
       );
 
-    return coincideRef &&
+    return coincideTitulo &&
+           coincideRef &&
            coincideModelo &&
            coincideTipo &&
            coincideUnidad &&
