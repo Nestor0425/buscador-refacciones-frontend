@@ -1,36 +1,47 @@
-// document.getElementById("loginForm").addEventListener("submit", async (e) => {
-//   e.preventDefault();
+const API = "https://buscador-refaccionesbackend.onrender.com";
 
-//   const correo = document.getElementById("email").value;
-//   const password = document.getElementById("password").value;
+document.addEventListener("DOMContentLoaded", () => {
 
-//   try {
-//     const response = await fetch("https://buscador-refaccionesbackend.onrender.com/login", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify({ 
-//   email: correo, 
-//   password 
-// })
-//     });
+  const form = document.getElementById("loginForm");
 
-//     if (!response.ok) {
-//       throw new Error("Credenciales incorrectas");
-//     }
+  if (!form) return; // seguridad por si no existe
 
-//     const data = await response.json();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-//     // ✅ AQUÍ sí existe data
-//     localStorage.setItem("token", data.token);
-//     localStorage.setItem("nombre", data.nombre);
-//     localStorage.setItem("rol", data.rol);
+    const correo = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-//     window.location.href = "Nadd.html";
+    try {
+      const response = await fetch(`${API}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: correo,
+          password
+        })
+      });
 
-//   } catch (error) {
-//     alert("Error al iniciar sesión");
-//     console.error(error);
-//   }
-// });
+      if (!response.ok) {
+        throw new Error("Credenciales incorrectas");
+      }
+
+      const data = await response.json();
+
+      // 🔐 Guardamos sesión
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("nombre", data.nombre);
+      localStorage.setItem("rol", data.rol);
+
+      window.location.href = "Nadd.html";
+
+    } catch (error) {
+      alert("Error al iniciar sesión");
+      console.error(error);
+    }
+
+  });
+
+});
