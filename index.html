@@ -626,25 +626,25 @@
     <h2>Bienvenido</h2>
     <p class="subtitle">Accede a tu cuenta</p>
 
-    <form>
-      <div class="input-group">
-         <input type="email" >
-        <label>Correo Electrónico</label>
-      </div>
+    <form id="loginForm">
+  <div class="input-group">
+    <input type="email" id="email" required>
+    <label>Correo Electrónico</label>
+  </div>
 
-      <div class="input-group">
-        <input type="password" >
-        <label>Contraseña</label>
-      </div>
+  <div class="input-group">
+    <input type="password" id="password" required>
+    <label>Contraseña</label>
+  </div>
 
-      <a href="Nadd.html" class="btn-login">Entrar</a>
-    </form>
+  <button type="submit" class="btn-login">Entrar</button>
+</form>
 
     <p class="footer">&copy; CONTENEDORES IEM - 2026</p>
 
   </div>
 </div>
-
+<script src="js/login.js"></script>
 </body>
 
 </html>
