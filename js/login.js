@@ -10,7 +10,10 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ correo, password })
+      body: JSON.stringify({ 
+  email: correo, 
+  password 
+})
     });
 
     if (!response.ok) {
