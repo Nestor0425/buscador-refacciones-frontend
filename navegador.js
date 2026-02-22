@@ -7,6 +7,10 @@ let modoGlobal = false;
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  const formFiltros = document.getElementById("formFiltros");
+if (formFiltros) {
+  formFiltros.style.display = "none";
+}
   document.getElementById("buscarTitulo")?.addEventListener("input", aplicarFiltros);
   document.getElementById("buscarRef")?.addEventListener("input", aplicarFiltros);
   document.getElementById("buscarModelo")?.addEventListener("input", aplicarFiltros);
@@ -23,6 +27,9 @@ document.getElementById("btnTodasRefacciones")?.addEventListener("click", async 
   console.log("🌎 ACTIVANDO MODO GLOBAL");
 
   modoGlobal = true;
+  if (formFiltros) {
+  formFiltros.style.display = "flex";
+}
   modeloSeleccionado = "";
   resultadosActuales = [];
 
@@ -64,6 +71,10 @@ inputTag.addEventListener("keydown", function(e) {
       e.preventDefault();
 
       modoGlobal = false;
+
+if (formFiltros) {
+  formFiltros.style.display = "flex";
+}
       tagsActivos = [];
 contenedorTags.querySelectorAll(".badge").forEach(t => t.remove());
       const maquinamod = link.dataset.maquinamod;
