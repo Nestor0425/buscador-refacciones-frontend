@@ -1,7 +1,7 @@
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const correo = document.getElementById("correo").value;
+  const correo = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   try {
