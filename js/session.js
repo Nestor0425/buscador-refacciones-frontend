@@ -1,3 +1,5 @@
+(function () {
+
 const API = "https://buscador-refaccionesbackend.onrender.com";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -9,29 +11,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // 🔥 1️⃣ Mostrar nombre guardado INMEDIATAMENTE (si existe)
-  const nombreGuardado = localStorage.getItem("nombre");
   const nombreElemento = document.getElementById("nombreUsuario");
 
+  // Mostrar nombre guardado si existe
+  const nombreGuardado = localStorage.getItem("nombre");
   if (nombreGuardado && nombreElemento) {
     nombreElemento.textContent = nombreGuardado;
   }
 
   try {
-    // 🔥 2️⃣ Validar sesión con backend
+
     const response = await fetch(`${API}/me`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
 
-    if (!response.ok) {
-      throw new Error("Token inválido");
-    }
+    if (!response.ok) throw new Error();
 
     const data = await response.json();
 
-    // 🔥 3️⃣ Actualizar nombre desde backend
     localStorage.setItem("nombre", data.nombre);
 
     if (nombreElemento) {
@@ -44,3 +43,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 });
+
+})();
