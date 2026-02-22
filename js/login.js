@@ -1,4 +1,7 @@
 const form = document.getElementById("loginForm");
+localStorage.setItem("nombre", data.nombre);
+localStorage.setItem("rol", data.rol);
+localStorage.setItem("token", data.token);
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
