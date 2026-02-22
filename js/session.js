@@ -1,42 +1,46 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const nombre = localStorage.getItem("nombre");
+const API = "https://buscador-refaccionesbackend.onrender.com";
+
+document.addEventListener("DOMContentLoaded", async () => {
+
   const token = localStorage.getItem("token");
 
-  // 🔐 Si no hay token → fuera
   if (!token) {
-    window.location.href = "index.html"; // tu login
+    window.location.replace("index.html");
     return;
   }
 
-  // 👤 Mostrar nombre
-  if (nombre) {
-    document.getElementById("nombreUsuario").textContent = nombre;
+  // 🔥 1️⃣ Mostrar nombre guardado INMEDIATAMENTE (si existe)
+  const nombreGuardado = localStorage.getItem("nombre");
+  const nombreElemento = document.getElementById("nombreUsuario");
+
+  if (nombreGuardado && nombreElemento) {
+    nombreElemento.textContent = nombreGuardado;
   }
-});
-
-const btnLogout = document.getElementById("btnLogout");
-
-btnLogout.addEventListener("click", async (e) => {
-  e.preventDefault();
-
-  const token = localStorage.getItem("token");
 
   try {
-    await fetch("https://buscador-refaccionesbackend.onrender.com/logout", {
-      method: "POST",
+    // 🔥 2️⃣ Validar sesión con backend
+    const response = await fetch(`${API}/me`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
-  } catch (err) {
-    console.error("Error cerrando sesión");
+
+    if (!response.ok) {
+      throw new Error("Token inválido");
+    }
+
+    const data = await response.json();
+
+    // 🔥 3️⃣ Actualizar nombre desde backend
+    localStorage.setItem("nombre", data.nombre);
+
+    if (nombreElemento) {
+      nombreElemento.textContent = data.nombre;
+    }
+
+  } catch (error) {
+    localStorage.clear();
+    window.location.replace("index.html");
   }
 
-  // 🔥 Limpiar almacenamiento
-  localStorage.removeItem("token");
-  localStorage.removeItem("nombre");
-  localStorage.removeItem("rol");
-
-  // 🔁 Volver al login
-  window.location.href = "index.html";
 });
