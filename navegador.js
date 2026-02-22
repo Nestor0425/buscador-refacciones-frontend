@@ -14,6 +14,30 @@ window.addEventListener("pageshow", function (event) {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+  try {
+  const response = await fetch(`${API}/me`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("Token inválido");
+  }
+
+  const data = await response.json();
+
+  // 🔥 AQUÍ sacamos el nombre directo del backend
+  const elementoUsuario = document.getElementById("usuarioActivo");
+  if (elementoUsuario) {
+    elementoUsuario.textContent = data.nombre;
+  }
+
+} catch (error) {
+  localStorage.clear();
+  window.location.replace("index.html");
+  return;
+}
 
   // 🔐 VALIDAR SESIÓN
   const token = localStorage.getItem("token");
@@ -25,10 +49,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const response = await fetch(`${API}/me`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+  headers: {
+    "Authorization": "Bearer " + token
+  }
+});
 
     if (!response.ok) {
       throw new Error("Token inválido");
