@@ -491,7 +491,7 @@ if (!document.getElementById("modalDetalles")) {
       <div class="modal-content border-0 shadow-lg">
 
         <!-- Header -->
-        <div class="modal-header text-white border-0" style="background: linear-gradient(90deg, #167d2b, #10b035);">
+        <div class="modal-header text-white border-0" style="background-color:#167d2b;">
           <h5 class="modal-title fw-bold" id="modal-nombre">Detalle Producto</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
@@ -509,7 +509,7 @@ if (!document.getElementById("modalDetalles")) {
 
             <!-- Nombre + categoría -->
             <h3 class="fw-bold" id="modal-nombreprod">Nombre Producto</h3>
-            <span class="badge bg-info text-dark" id="modal-categoria">Categoría: -</span>
+            <span class="badge bg-success text-dark" id="modal-categoria">Categoría: -</span>
 
             <!-- Grid de detalles -->
             <div class="row row-cols-1 row-cols-md-2 g-3 mt-2">
@@ -533,7 +533,7 @@ if (!document.getElementById("modalDetalles")) {
                 <path d="M12 6a6 6 0 1 1-12 0 6 6 0 0 1 12 0zM8 0a8 8 0 0 0-8 8c0 4 4 8 8 12 4-4 8-8 8-12a8 8 0 0 0-8-8z"/>
               </svg>
               <div>
-                <div class="fw-bold text-white">Ubicación</div>
+                <div class="fw-bold text-success">Ubicación</div>
                 <div id="modal-ubicacion" class="fs-5 fw-semibold text-success">Sin ubicación</div>
               </div>
             </div>
