@@ -484,124 +484,106 @@ function mostrarResultados(lista) {
     cont.appendChild(fragment);
 
     // --- Modal Bootstrap Fullscreen (solo se agrega una vez) ---
-    if (!document.getElementById("modalDetalles")) {
-      const modalHTML = `
-      <!-- Modal Detalles Producto -->
-<div class="modal fade" id="modalDetalles" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content border-0 shadow-lg">
+if (!document.getElementById("modalDetalles")) {
+  const modalHTML = `
+  <div class="modal fade" id="modalDetalles" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content border-0 shadow-lg">
 
-      <!-- Header -->
-      <div class="modal-header bg-primary text-white border-0">
-        <h5 class="modal-title fw-bold" id="modal-nombre">Detalle del Producto</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-
-      <!-- Body -->
-      <div class="modal-body p-4 d-flex flex-column flex-lg-row gap-4">
-
-        <!-- Columna imagen -->
-        <div class="modal-imagen flex-shrink-0 text-center" style="min-width:300px;">
-          <img id="modal-img" src="no-image.jpg" alt="Producto" class="img-fluid rounded shadow-sm border" style="max-height:450px; object-fit:contain;">
+        <!-- Header -->
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title fw-bold" id="modal-nombre">Detalle Producto</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
 
-        <!-- Columna info -->
-        <div class="modal-detalles flex-grow-1 d-flex flex-column gap-3">
+        <!-- Body -->
+        <div class="modal-body p-4 d-flex flex-column flex-lg-row gap-4">
 
-          <!-- Nombre + categoría -->
-          <h3 class="fw-bold" id="modal-nombreprod">Nombre Producto</h3>
-          <span class="badge bg-info text-dark" id="modal-categoria">Categoría: -</span>
-
-          <!-- Grid de detalles -->
-          <div class="row row-cols-1 row-cols-md-2 g-3 mt-2">
-            <div class="col">
-              <div class="fw-semibold text-secondary">Modelo</div>
-              <div id="modal-modelo">-</div>
-            </div>
-            <div class="col">
-              <div class="fw-semibold text-secondary">Tipo</div>
-              <div id="modal-tipoprod">-</div>
-            </div>
-            <div class="col">
-              <div class="fw-semibold text-secondary">Referencia Interna</div>
-              <div id="modal-refinterna">-</div>
-            </div>
-            <div class="col">
-              <div class="fw-semibold text-secondary">Palabras Clave</div>
-              <div id="modal-palclave">-</div>
-            </div>
-            <div class="col">
-              <div class="fw-semibold text-secondary">Cantidad</div>
-              <div id="modal-cantidad">-</div>
-            </div>
-            <div class="col">
-              <div class="fw-semibold text-secondary">Unidad</div>
-              <div id="modal-unidad">-</div>
-            </div>
+          <!-- Imagen destacada -->
+          <div class="modal-imagen flex-shrink-0 text-center" style="min-width:300px;">
+            <img id="modal-img" src="no-image.jpg" alt="Producto" class="img-fluid rounded shadow-sm border" style="max-height:450px; object-fit:contain;">
           </div>
 
-          <!-- Ubicación resaltada -->
-          <div class="mt-3 p-3 bg-primary bg-opacity-10 border border-primary rounded d-flex align-items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#0d6efd" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
-              <path d="M12 6a6 6 0 1 1-12 0 6 6 0 0 1 12 0zM8 0a8 8 0 0 0-8 8c0 4 4 8 8 12 4-4 8-8 8-12a8 8 0 0 0-8-8z"/>
-            </svg>
-            <div>
-              <div class="fw-bold text-primary">Ubicación</div>
-              <div id="modal-ubicacion" class="fs-5 fw-semibold text-dark">Sin ubicación</div>
+          <!-- Datos -->
+          <div class="modal-detalles flex-grow-1 d-flex flex-column gap-3">
+
+            <!-- Nombre + categoría -->
+            <h3 class="fw-bold" id="modal-nombreprod">Nombre Producto</h3>
+            <span class="badge bg-info text-dark" id="modal-categoria">Categoría: -</span>
+
+            <!-- Grid de detalles -->
+            <div class="row row-cols-1 row-cols-md-2 g-3 mt-2">
+              <div class="col"><div class="fw-semibold text-secondary">Máquina Modelo</div><div id="modal-maquinamod">-</div></div>
+              <div class="col"><div class="fw-semibold text-secondary">Máquina Específica</div><div id="modal-maquinaesp">-</div></div>
+              <div class="col"><div class="fw-semibold text-secondary">Tipo</div><div id="modal-tipoprod">-</div></div>
+              <div class="col"><div class="fw-semibold text-secondary">Modelo</div><div id="modal-modelo">-</div></div>
+              <div class="col"><div class="fw-semibold text-secondary">Ref. Interna</div><div id="modal-refinterna">-</div></div>
+              <div class="col"><div class="fw-semibold text-secondary">Palabra Clave</div><div id="modal-palclave">-</div></div>
+              <div class="col"><div class="fw-semibold text-secondary">Cantidad</div><div id="modal-cantidad">-</div></div>
+              <div class="col"><div class="fw-semibold text-secondary">Unidad</div><div id="modal-unidad">-</div></div>
             </div>
-          </div>
 
-          <!-- Observaciones -->
-          <div class="mt-3">
-            <div class="fw-semibold text-secondary">Observaciones</div>
-            <div id="modal-observacion" class="text-break fs-6">-</div>
-          </div>
+            <!-- Ubicación destacada -->
+            <div class="mt-3 p-3 bg-primary bg-opacity-10 border border-primary rounded d-flex align-items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#0d6efd" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                <path d="M12 6a6 6 0 1 1-12 0 6 6 0 0 1 12 0zM8 0a8 8 0 0 0-8 8c0 4 4 8 8 12 4-4 8-8 8-12a8 8 0 0 0-8-8z"/>
+              </svg>
+              <div>
+                <div class="fw-bold text-primary">Ubicación</div>
+                <div id="modal-ubicacion" class="fs-5 fw-semibold text-dark">Sin ubicación</div>
+              </div>
+            </div>
 
+            <!-- Observaciones -->
+            <div class="mt-3">
+              <div class="fw-semibold text-secondary">Observaciones</div>
+              <div id="modal-observacion" class="text-break fs-6">-</div>
+            </div>
+
+          </div>
         </div>
-      </div>
 
-      <!-- Footer -->
-      <div class="modal-footer border-0 justify-content-end">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-      </div>
+        <!-- Footer -->
+        <div class="modal-footer border-0 justify-content-end">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
 
+      </div>
     </div>
   </div>
-</div>
-      `;
-      document.body.insertAdjacentHTML("beforeend", modalHTML);
-    }
+  `;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+}
 
-    // --- Inicializar Bootstrap 5 Modal ---
-    const modalDetallesEl = document.getElementById('modalDetalles');
-    const modalDetalles = new bootstrap.Modal(modalDetallesEl);
+// --- Inicializar Bootstrap 5 Modal ---
+const modalDetallesEl = document.getElementById('modalDetalles');
+const modalDetalles = new bootstrap.Modal(modalDetallesEl);
 
-    // --- Abrir modal con datos ---
-    document.querySelectorAll(".btn-detalles").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.dataset.id;
-        const ref = lista.find(r => r.id == id);
-        if (!ref) return;
+// --- Abrir modal con datos ---
+document.querySelectorAll(".btn-detalles").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const id = btn.dataset.id;
+    const ref = lista.find(r => r.id == id);
+    if (!ref) return;
 
-        document.getElementById("modal-nombre").textContent = ref.nombreprod;
-        document.getElementById("modal-body").innerHTML = `
-          <p><strong>ID:</strong> ${ref.id}</p>
-          <p><strong>Categoría:</strong> ${ref.categoriaprin}</p>
-          <p><strong>Máquina Modelo:</strong> ${ref.maquinamod}</p>
-          <p><strong>Máquina Específica:</strong> ${ref.maquinaesp}</p>
-          <p><strong>Tipo:</strong> ${ref.tipoprod}</p>
-          <p><strong>Modelo:</strong> ${ref.modelo}</p>
-          <p><strong>Ref. Interna:</strong> ${ref.refinterna}</p>
-          <p><strong>Palabra Clave:</strong> ${ref.palclave}</p>
-          <p><strong>Cantidad:</strong> ${ref.cantidad} ${ref.unidad}</p>
-          <p><strong>Ubicación:</strong> ${ref.ubicacion}</p>
-          <p><strong>Observación:</strong> ${ref.observacion || '-'}</p>
-          <p><strong>Imagen:</strong><br><img src="${ref.imagen || 'no-image.jpg'}" style="max-width:100%;"></p>
-        `;
+    document.getElementById("modal-nombre").textContent = ref.nombreprod;
+    document.getElementById("modal-nombreprod").textContent = ref.nombreprod;
+    document.getElementById("modal-categoria").textContent = `Categoría: ${ref.categoriaprin}`;
+    document.getElementById("modal-maquinamod").textContent = ref.maquinamod || '-';
+    document.getElementById("modal-maquinaesp").textContent = ref.maquinaesp || '-';
+    document.getElementById("modal-tipoprod").textContent = ref.tipoprod || '-';
+    document.getElementById("modal-modelo").textContent = ref.modelo || '-';
+    document.getElementById("modal-refinterna").textContent = ref.refinterna || '-';
+    document.getElementById("modal-palclave").textContent = ref.palclave || '-';
+    document.getElementById("modal-cantidad").textContent = ref.cantidad || '-';
+    document.getElementById("modal-unidad").textContent = ref.unidad || '-';
+    document.getElementById("modal-ubicacion").textContent = ref.ubicacion || 'Sin ubicación';
+    document.getElementById("modal-observacion").textContent = ref.observacion || '-';
+    document.getElementById("modal-img").src = ref.imagen || 'no-image.jpg';
 
-        modalDetalles.show();
-      });
-    });
+    modalDetalles.show();
+  });
+});
 
   } else {
     filtrarCards();
