@@ -2,12 +2,11 @@
 
 const API = "https://buscador-refaccionesbackend.onrender.com";
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function validarSesion() {
 
   const token = localStorage.getItem("token");
   const nombreElemento = document.getElementById("nombreUsuario");
 
-  // 🔐 Si no hay token → fuera
   if (!token) {
     window.location.replace("index.html");
     return;
@@ -24,27 +23,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const data = await response.json();
 
-    // ✅ Actualizamos nombre directo del backend
     if (nombreElemento) {
       nombreElemento.textContent = data.nombre;
     }
 
   } catch (error) {
-    localStorage.clear();
+    console.log("Token inválido");
+    localStorage.removeItem("token");
     window.location.replace("index.html");
   }
 
+}
+
+function configurarLogout() {
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (!logoutBtn) return;
+
+  logoutBtn.addEventListener("click", () => {
+    localStorage.clear();
+    window.location.replace("index.html");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  validarSesion();
+  configurarLogout();
 });
 
 })();
-
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.clear();
-      window.location.replace("index.html");
-    });
-  }
-});
