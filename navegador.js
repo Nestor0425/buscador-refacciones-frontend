@@ -491,7 +491,7 @@ if (!document.getElementById("modalDetalles")) {
       <div class="modal-content border-0 shadow-lg">
 
         <!-- Header -->
-        <div class="modal-header bg-primary text-white border-0">
+        <div class="modal-header text-white border-0" style="background: linear-gradient(90deg, #0d6efd, #6610f2);">
           <h5 class="modal-title fw-bold" id="modal-nombre">Detalle Producto</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
@@ -509,7 +509,7 @@ if (!document.getElementById("modalDetalles")) {
 
             <!-- Nombre + categoría -->
             <h3 class="fw-bold" id="modal-nombreprod">Nombre Producto</h3>
-            <span class="badge bg-info text-dark" id="modal-categoria">Categoría: -</span>
+            <span class="badge text-dark" id="modal-categoria" style="background-color: #adb5bd;">Categoría: -</span>
 
             <!-- Grid de detalles -->
             <div class="row row-cols-1 row-cols-md-2 g-3 mt-2">
@@ -524,17 +524,17 @@ if (!document.getElementById("modalDetalles")) {
             <!-- Máquinas compatibles -->
             <div class="mt-3">
               <div class="fw-semibold text-secondary mb-1">Máquinas Compatibles</div>
-              <div id="modal-maquinas" class="d-flex flex-wrap gap-2"></div>
+              <div id="modal-maquinas" class="d-flex flex-wrap gap-2" style="color: #007a33;"></div>
             </div>
 
             <!-- Ubicación destacada -->
-            <div class="mt-3 p-3 bg-primary bg-opacity-10 border border-primary rounded d-flex align-items-center gap-3">
+            <div class="mt-3 p-3 bg-opacity-10 border border-primary rounded d-flex align-items-center gap-3" style="background-color: #007a33;">
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#0d6efd" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
                 <path d="M12 6a6 6 0 1 1-12 0 6 6 0 0 1 12 0zM8 0a8 8 0 0 0-8 8c0 4 4 8 8 12 4-4 8-8 8-12a8 8 0 0 0-8-8z"/>
               </svg>
               <div>
-                <div class="fw-bold text-primary">Ubicación</div>
-                <div id="modal-ubicacion" class="fs-5 fw-semibold text-dark">Sin ubicación</div>
+                <div class="fw-bold" style="color: #ffffff;">Ubicación</div>
+                <div id="modal-ubicacion" class="fs-5 fw-semibold" style="color: #ffffff;">Sin ubicación</div>
               </div>
             </div>
 
@@ -604,7 +604,7 @@ document.querySelectorAll(".btn-detalles").forEach(btn => {
           if (!maquina) return;
 
           const span = document.createElement("span");
-          span.className = "badge bg-secondary me-1 mb-1";
+          span.className = "badge me-1 mb-1";
           // Muestra nombre, tipo y modelo de la máquina
           span.textContent = `${maquina.nombre || ""} ${maquina.tipo || ""} ${maquina.modelo || ""}`;
           span.title = `ID: ${maquina.id || ""} Tipo: ${maquina.tipo || ""} Modelo: ${maquina.modelo || ""}`;
