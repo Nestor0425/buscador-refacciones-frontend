@@ -566,7 +566,7 @@ const modalDetalles = new bootstrap.Modal(modalDetallesEl);
 // --- Abrir modal con datos ---
 // --- Abrir modal con datos ---
 document.querySelectorAll(".btn-detalles").forEach(btn => {
-  btn.addEventListener("click", async () => { // async para poder await
+  btn.addEventListener("click", async () => {
     const id = btn.dataset.id;
     const ref = lista.find(r => r.id == id);
     if (!ref) return;
@@ -585,36 +585,38 @@ document.querySelectorAll(".btn-detalles").forEach(btn => {
     document.getElementById("modal-observacion").textContent = ref.observacion || '-';
     document.getElementById("modal-img").src = ref.imagen || 'no-image.jpg';
 
-    // --- Máquinas compatibles (fetch separado) ---
-    // contenedor
-const contMaquinas = document.getElementById("modal-maquinas");
-contMaquinas.innerHTML = "Cargando máquinas...";
+    // --- Contenedor de máquinas ---
+    const contMaquinas = document.getElementById("modal-maquinas");
+    contMaquinas.innerHTML = "Cargando máquinas...";
 
-try {
-  // Traer compatibles actuales (solo IDs)
-  const resp = await fetch(`${API}/refacciones/${ref.id}/compatibles`);
-  const data = await resp.json();
-  contMaquinas.innerHTML = "";
+    try {
+      // --- Traer todas las máquinas disponibles ---
+      const maquinasDisponibles = await fetch(`${API}/maquinas`).then(r => r.json());
 
-  if (data.maquinas && data.maquinas.length > 0) {
-    // mapea cada ID a su objeto completo desde maquinasDisponibles
-    data.maquinas.forEach(idMaquina => {
-      const maquina = maquinasDisponibles.find(m => m.id == idMaquina);
-      if (!maquina) return;
+      // --- Traer compatibles actuales (solo IDs) ---
+      const resp = await fetch(`${API}/refacciones/${ref.id}/compatibles`);
+      const data = await resp.json();
 
-      const span = document.createElement("span");
-      span.className = "badge bg-secondary me-1 mb-1";
-      span.textContent = `${maquina.nombre || "-"} | Tipo: ${maquina.tipo || "-"}`;
-      span.title = `ID: ${maquina.id || "-"} | Tipo: ${maquina.tipo || "-"}`;
-      contMaquinas.appendChild(span);
-    });
-  } else {
-    contMaquinas.textContent = "No hay máquinas compatibles";
-  }
-} catch (err) {
-  contMaquinas.textContent = "Error al cargar máquinas";
-  console.error(err);
-}
+      contMaquinas.innerHTML = "";
+      if (data.maquinas && data.maquinas.length > 0) {
+        data.maquinas.forEach(idMaquina => {
+          const maquina = maquinasDisponibles.find(m => m.id == idMaquina);
+          if (!maquina) return;
+
+          const span = document.createElement("span");
+          span.className = "badge bg-secondary me-1 mb-1";
+          // Muestra nombre, tipo y modelo de la máquina
+          span.textContent = `${maquina.nombre || "-"} | ${maquina.tipo || "-"} | ${maquina.modelo || "-"}`;
+          span.title = `ID: ${maquina.id || "-"} | Tipo: ${maquina.tipo || "-"} | Modelo: ${maquina.modelo || "-"}`;
+          contMaquinas.appendChild(span);
+        });
+      } else {
+        contMaquinas.textContent = "No hay máquinas compatibles";
+      }
+    } catch (err) {
+      contMaquinas.textContent = "Error al cargar máquinas";
+      console.error(err);
+    }
 
     // --- Mostrar modal ---
     modalDetalles.show();

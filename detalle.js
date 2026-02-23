@@ -56,29 +56,7 @@ async function cargarOpciones(endpoint, selectId) {
   }
 }
 
-/* =========================
-   CARGAR CHECKLIST MAQUINAS
-========================= */
-// async function cargarMaquinasCompatibles() {
-//   const maquinas = await fetch(`${API}/maquinas`).then(r => r.json());
-//   const resp = await fetch(`${API}/refacciones/${id}/compatibles`)
-//     .then(r => r.json());
 
-//   const idsCompatibles = resp.maquinas || [];
-
-//   const cont = document.getElementById("lista-maquinas");
-//   cont.innerHTML = "";
-
-//   maquinas.forEach(m => {
-//     const checked = idsCompatibles.includes(m.id) ? "checked" : "";
-//     cont.innerHTML += `
-//       <label style="display:block">
-//         <input type="checkbox" value="${m.id}" ${checked}>
-//         ${m.maquinamod} ${m.maquinaesp}
-//       </label>
-//     `;
-//   });
-// }
 
 /* =========================
    GUARDAR CAMBIOS
