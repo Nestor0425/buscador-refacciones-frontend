@@ -606,8 +606,8 @@ document.querySelectorAll(".btn-detalles").forEach(btn => {
           const span = document.createElement("span");
           span.className = "badge bg-secondary me-1 mb-1";
           // Muestra nombre, tipo y modelo de la máquina
-          span.textContent = `${maquina.nombre || "-"} | ${maquina.tipo || "-"} | ${maquina.modelo || "-"}`;
-          span.title = `ID: ${maquina.id || "-"} | Tipo: ${maquina.tipo || "-"} | Modelo: ${maquina.modelo || "-"}`;
+          span.textContent = `${maquina.nombre || ""} | ${maquina.tipo || ""} | ${maquina.modelo || ""}`;
+          span.title = `ID: ${maquina.id || ""} | Tipo: ${maquina.tipo || ""} | Modelo: ${maquina.modelo || ""}`;
           contMaquinas.appendChild(span);
         });
       } else {
