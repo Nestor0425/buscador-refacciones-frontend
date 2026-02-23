@@ -564,12 +564,14 @@ const modalDetallesEl = document.getElementById('modalDetalles');
 const modalDetalles = new bootstrap.Modal(modalDetallesEl);
 
 // --- Abrir modal con datos ---
+// --- Abrir modal con datos ---
 document.querySelectorAll(".btn-detalles").forEach(btn => {
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => { // async para poder await
     const id = btn.dataset.id;
     const ref = lista.find(r => r.id == id);
     if (!ref) return;
 
+    // --- Datos básicos ---
     document.getElementById("modal-nombre").textContent = ref.nombreprod;
     document.getElementById("modal-nombreprod").textContent = ref.nombreprod;
     document.getElementById("modal-categoria").textContent = `Categoría: ${ref.categoriaprin}`;
@@ -583,20 +585,29 @@ document.querySelectorAll(".btn-detalles").forEach(btn => {
     document.getElementById("modal-observacion").textContent = ref.observacion || '-';
     document.getElementById("modal-img").src = ref.imagen || 'no-image.jpg';
 
-    // --- Máquinas compatibles ---
+    // --- Máquinas compatibles (fetch separado) ---
     const contMaquinas = document.getElementById("modal-maquinas");
-    contMaquinas.innerHTML = ""; // limpiar previo
-    if(ref.maquinacompatibles && ref.maquinacompatibles.length > 0){
-      ref.maquinacompatibles.forEach(m => {
-        const span = document.createElement("span");
-        span.className = "badge bg-secondary";
-        span.textContent = m;
-        contMaquinas.appendChild(span);
-      });
-    } else {
-      contMaquinas.textContent = "No hay máquinas compatibles";
+    contMaquinas.innerHTML = "Cargando máquinas...";
+    try {
+      const resp = await fetch(`${API}/refacciones/${ref.id}/compatibles`);
+      const data = await resp.json();
+      contMaquinas.innerHTML = "";
+      if (data.maquinas && data.maquinas.length > 0) {
+        data.maquinas.forEach(m => {
+          const span = document.createElement("span");
+          span.className = "badge bg-secondary";
+          span.textContent = m;
+          contMaquinas.appendChild(span);
+        });
+      } else {
+        contMaquinas.textContent = "No hay máquinas compatibles";
+      }
+    } catch (err) {
+      contMaquinas.textContent = "Error al cargar máquinas";
+      console.error(err);
     }
 
+    // --- Mostrar modal ---
     modalDetalles.show();
   });
 });
