@@ -319,20 +319,13 @@
                         <button class="btn-toggle" id="btnTodasRefacciones">
                             <i class="bi bi-hammer me-2" style="color: #007a33;"></i>Refacciones
                         </button>
-                        <!-- <div class="collapse" id="dash-collapse">
-                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                <li><a href="actDatos/importar-odoo.html">Actualizar refacciones</a></li>
-                                <li><a href="refacciones.html">Editar refacciones</a></li>
-                                <li><a href="Info.html">Consola</a></li>
-                            </ul>
-                        </div> -->
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#dash-collapse">
                             <i class="bi bi-pencil-square me-2" style="color: #007a33;"></i> Acciones
                         </button>
-                        <div class="collapse" id="dash-collapse">
+                        <div class="collapse" id="dash-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="actDatos/importar-odoo.html">Actualizar refacciones</a></li>
                                 <li><a href="refacciones.html">Editar refacciones</a></li>
@@ -341,11 +334,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#MAQU-collapse">
                             <i class="bi bi-tools me-2" style="color: #675e5e;"></i> Maquinas
                         </button>
-                        <div class="collapse" id="MAQU-collapse">
+                        <div class="collapse" id="MAQU-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="javascript:void(0)" class="link-body-emphasis maquina-link d-block fw-bold" data-categoriaprin="Maquinas" data-maquinamod="AOKI SBIII-500-150">AOKI</a></li>
                                 <li class="mb-2"><a href="#collapseASB" class="link-body-emphasis  d-block fw-bold" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseASB">ASB</a>
@@ -474,11 +467,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#MOLDES-collapse">
                             <i class="bi bi-box-seam-fill me-2" style="color: #ab1091;"></i> Moldes
                         </button>
-                        <div class="collapse" id="MOLDES-collapse">
+                        <div class="collapse" id="MOLDES-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="javascript:void(0)" class="link-body-emphasis maquina-link d-block fw-bold" data-categoriaprin="Maquinas" data-maquinamod="MOLDE TAPA">MOLDES DE INYECCION PP</a></li>
                                 <li><a href="javascript:void(0)" class="link-body-emphasis maquina-link d-block fw-bold" data-categoriaprin="Maquinas" data-maquinamod="MOLDES DE INYECCION SOPLADO">MOLDES DE INYECCION SOPLADO</a></li>
@@ -499,11 +492,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#PER-collapse">
                             <i class="bi bi-gear-wide-connected me-2" style="color: #1091ab;"></i> Compresores
                         </button>
-                        <div class="collapse" id="PER-collapse">
+                        <div class="collapse" id="PER-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li class="mb-2"><a href="#collapseCOM" class="link-body-emphasis  d-block fw-bold" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCOM">COMPRESORES</a>
                                     <div class="collapse mt-2 ps-3" id="collapseCOM">
@@ -563,11 +556,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#RedAg-collapse">
                             <i class="bi bi-droplet-fill me-2" style="color: #3ab5f7;"></i> Red de Agua
                         </button>
-                        <div class="collapse" id="RedAg-collapse">
+                        <div class="collapse" id="RedAg-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="javascript:void(0)" class="link-body-emphasis maquina-link d-block fw-bold" data-categoriaprin="Maquinas" data-maquinamod="SISTEMA RED DE AGUA REYMSA">SISTEMA RED DE AGUA REYMSA</a></li>
                                 <li><a href="javascript:void(0)" class="link-body-emphasis maquina-link d-block fw-bold" data-categoriaprin="Maquinas" data-maquinamod="SISTEMA RED DE AGUA FRIGEL">SISTEMA RED DE AGUA FRIGEL</a></li>
@@ -577,11 +570,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#Subestacion-collapse">
                             <i class="bi bi-lightning-charge-fill me-2" style="color: #f0c000;"></i> Subestacion
                         </button>
-                        <div class="collapse" id="Subestacion-collapse">
+                        <div class="collapse" id="Subestacion-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="#">AOKI</a></li>
                                 <li><a href="#">ASB</a></li>
@@ -594,11 +587,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#TRransportes-collapse">
                             <i class="bi bi-truck me-2" style="color: #d50c3b;"></i> Transportes
                         </button>
-                        <div class="collapse" id="TRransportes-collapse">
+                        <div class="collapse" id="TRransportes-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="#">AOKI</a></li>
                                 <li><a href="#">ASB</a></li>
@@ -611,11 +604,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#EquiposAuxiliares-collapse">
                             <i class="bi bi-wrench-adjustable me-2" style="color: #62604f;"></i> Equipos Auxiliares
                         </button>
-                        <div class="collapse" id="EquiposAuxiliares-collapse">
+                        <div class="collapse" id="EquiposAuxiliares-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="#">AOKI</a></li>
                                 <li><a href="#">ASB</a></li>
@@ -623,11 +616,11 @@
                         </div>
                     </li>
 
-                    <li class="mb-1">
+                    <li class="mb-1" id="sidebar">
                         <button class="btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#SERV-collapse">
                             <i class="bi bi-person-gear me-2" style="color: #fd7601;"></i> Servicios
                         </button>
-                        <div class="collapse" id="SERV-collapse">
+                        <div class="collapse" id="SERV-collapse" data-bs-parent="#sidebar">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="#">AOKI</a></li>
                                 <li><a href="#">ASB</a></li>
