@@ -4,28 +4,70 @@ let resultadosActuales = [];
 let tagsActivos = [];
 let modoGlobal = false;
 
-// Obtener usuario actual
-const usuario = Sesion.obtenerUsuario();
-if (usuario) {
-  console.log("ID:", usuario.id);
-  console.log("Nombre:", usuario.nombre);
-  console.log("Rol:", usuario.rol);
-} else {
-  console.log("No hay usuario logueado");
+// =========================
+// 🔒 Validación de sesión
+// =========================
+async function validarSesion() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // No hay token, redirigimos
+      window.location.replace("index.html");
+      return null;
+    }
+
+    // Validamos con backend
+    const response = await fetch(`${API}/me`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    if (!response.ok) {
+      throw new Error("Token inválido");
+    }
+
+    const usuario = await response.json();
+
+    // Mostramos info en consola
+    console.log("ID:", usuario.id);
+    console.log("Nombre:", usuario.nombre);
+    console.log("Rol:", usuario.rol);
+
+    // 🔥 Actualizar nombre en la UI si existe
+    const elementoUsuario = document.getElementById("usuarioActivo");
+    if (elementoUsuario) {
+      elementoUsuario.textContent = usuario.nombre;
+    }
+
+    return usuario;
+
+  } catch (error) {
+    console.error("Error validando sesión:", error);
+    localStorage.clear();
+    window.location.replace("index.html");
+    return null;
+  }
 }
 
-// Forzar validación de sesión en cualquier momento
-Sesion.validar().then(u => {
-  if (u) console.log("Usuario validado:", u.nombre);
-});
+// =========================
+// Evitar volver atrás
+// =========================
+function bloquearBotonAtras() {
+  window.history.pushState(null, "", window.location.href);
+  window.onpopstate = function () {
+    window.history.go(1);
+  };
+}
 
-window.addEventListener("pageshow", function (event) {
-  const token = localStorage.getItem("token");
+// =========================
+// Ejecutar al cargar la página
+// =========================
+window.addEventListener("DOMContentLoaded", async () => {
+  const usuario = await validarSesion();
+  if (!usuario) return;
 
-  if (!token) {
-    window.location.replace("index.html");
-  }
+  bloquearBotonAtras();
 });
+window.addEventListener("pageshow", () => validarSesion());
 
 document.addEventListener("DOMContentLoaded", async () => {
 
