@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btnUbicadas">
+  Mostrar refacciones con ubicación
+</button>
+
+<div id="resultadoUbi"></div>
+</body>
+<script>
+document.getElementById("btnUbicadas").addEventListener("click", async () => {
+  try {
+    const response = await fetch("https://buscador-refaccionesbackend.onrender.com/refacciones/con-ubicacion");
+    const data = await response.json();
+
+    const contenedor = document.getElementById("resultadoUbi");
+    contenedor.innerHTML = "";
+
+    data.forEach(ref => {
+      contenedor.innerHTML += `
+        <div>
+          <strong>${ref.descripcion || "Sin descripción"}</strong>
+          - ${ref.ubicacion}
+        </div>
+      `;
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+});
+</script>
+</html>
