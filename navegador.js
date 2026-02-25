@@ -294,15 +294,6 @@ function mostrarResultados(lista) {
           <div class="ref-modelo">Modelo: <strong>${r.modelo || '-'}</strong></div>
           <div class="ref-cantidad">Cantidad: <strong>${r.cantidad} ${r.unidad || ''}</strong></div>
           <div class="ref-ubicacion">📍 ${r.ubicacion || 'Sin ubicación'}</div>
-          <div class="ref-maquinas">
-  ${
-    r.maquinas && r.maquinas.length > 0
-      ? r.maquinas.map(m => 
-          `<span class="badge bg-dark me-1">${m.nombre}</span>`
-        ).join('')
-      : '<span class="text-muted">No registradas</span>'
-  }
-</div>
           <div class="ref-actions">
             <a href="detalle.html?id=${r.id}" class="btn-ver btn btn-primary btn-sm">Ver / Editar</a>
             <button class="btn-detalles btn btn-secondary btn-sm" data-id="${r.id}" data-bs-toggle="modal" data-bs-target="#modalDetalles">Detalles</button>
