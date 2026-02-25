@@ -295,11 +295,10 @@ function mostrarResultados(lista) {
           <div class="ref-cantidad">Cantidad: <strong>${r.cantidad} ${r.unidad || ''}</strong></div>
           <div class="ref-ubicacion">📍 ${r.ubicacion || 'Sin ubicación'}</div>
           <div class="ref-maquinas">
-  <strong>Máquinas compatibles:</strong>
   ${
-    r.maquinas
-      ? r.maquinas.split(',').map(m => 
-          `<span class="badge bg-dark me-1">${m.trim()}</span>`
+    r.maquinas && r.maquinas.length > 0
+      ? r.maquinas.map(m => 
+          `<span class="badge bg-dark me-1">${m.nombre}</span>`
         ).join('')
       : '<span class="text-muted">No registradas</span>'
   }
