@@ -30,7 +30,7 @@ document.getElementById("btnUbicadas").addEventListener("click", async () => {
       contenedor.innerHTML = "<p>No hay refacciones con ubicación</p>";
       return;
     }
-
+    console.log(result);
     result.data.forEach(ref => {
       contenedor.innerHTML += `
         <div>
