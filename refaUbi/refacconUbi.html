@@ -69,8 +69,11 @@ if (!todas || (!todas.data && !Array.isArray(todas))) {
   return;
 }
 
-    const totalGeneral = todas.data.length;
-    const totalConUbicacion = ubicadas.data.length;
+    const totalGeneral = Array.isArray(todas)
+  ? todas.length
+  : todas.data.length;
+
+const totalConUbicacion = ubicadas.data.length;
 
     mostrarProgreso(totalGeneral, totalConUbicacion);
 
