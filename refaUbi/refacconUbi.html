@@ -40,7 +40,9 @@
 
 <script>
 
-let refaccionesGlobal = [];
+let refaccionesOriginal = [];
+let refaccionesFiltradas = [];
+
 let paginaActual = 1;
 const porPagina = 12;
 
@@ -55,7 +57,8 @@ document.getElementById("btnUbicadas").addEventListener("click", async () => {
       return;
     }
 
-    refaccionesGlobal = result.data;
+    refaccionesOriginal = result.data;
+    refaccionesFiltradas = [...refaccionesOriginal];
     paginaActual = 1;
 
     document.getElementById("buscadorContainer").classList.remove("d-none");
@@ -85,14 +88,14 @@ function renderizarCards() {
   const inicio = (paginaActual - 1) * porPagina;
   const fin = inicio + porPagina;
 
-  const datosPagina = refaccionesGlobal.slice(inicio, fin);
+  const datosPagina = refaccionesFiltradas.slice(inicio, fin);
 
   totalCard.innerHTML = `
     <div class="card shadow-sm border-0">
       <div class="card-body text-center">
         <h5 class="mb-0">
           Total registros: 
-          <span class="text-success fw-bold">${refaccionesGlobal.length}</span>
+          <span class="text-success fw-bold">${refaccionesFiltradas.length}</span>
         </h5>
       </div>
     </div>
@@ -147,8 +150,7 @@ function renderizarPaginacion() {
   const paginacion = document.getElementById("paginacion");
   paginacion.innerHTML = "";
 
-  const totalPaginas = Math.ceil(refaccionesGlobal.length / porPagina);
-
+  const totalPaginas = Math.ceil(refaccionesFiltradas.length / porPagina);
   if (totalPaginas <= 1) return;
 
   let html = `<nav><ul class="pagination">`;
@@ -186,29 +188,28 @@ function renderizarPaginacion() {
 
 
 function cambiarPagina(numero) {
-  const totalPaginas = Math.ceil(refaccionesGlobal.length / porPagina);
+  const totalPaginas = Math.ceil(refaccionesFiltradas.length / porPagina);
 
   if (numero < 1 || numero > totalPaginas) return;
 
   paginaActual = numero;
   renderizarTodo();
-
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 
-// 🔎 Buscador con paginación reiniciada
+// 🔎 BUSCADOR CORREGIDO
 document.getElementById("buscador").addEventListener("input", (e) => {
+
   const texto = e.target.value.toLowerCase();
 
-  const filtradas = refaccionesGlobal.filter(ref =>
+  refaccionesFiltradas = refaccionesOriginal.filter(ref =>
     (ref.nombreprod || "").toLowerCase().includes(texto) ||
     (ref.refinterna || "").toLowerCase().includes(texto) ||
     (ref.ubicacion || "").toLowerCase().includes(texto)
   );
 
   paginaActual = 1;
-  refaccionesGlobal = filtradas;
 
   renderizarTodo();
 });
