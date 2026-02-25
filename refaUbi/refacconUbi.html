@@ -16,12 +16,22 @@
 document.getElementById("btnUbicadas").addEventListener("click", async () => {
   try {
     const response = await fetch("https://buscador-refaccionesbackend.onrender.com/refacciones/con-ubicacion");
-    const data = await response.json();
+    const result = await response.json();
 
-    const contenedor = document.getElementById("resultadoUbi");
+    const contenedor = document.getElementById("resultado");
     contenedor.innerHTML = "";
 
-    data.forEach(ref => {
+    if (!result.ok) {
+      contenedor.innerHTML = "<p>Error al obtener datos</p>";
+      return;
+    }
+
+    if (result.data.length === 0) {
+      contenedor.innerHTML = "<p>No hay refacciones con ubicación</p>";
+      return;
+    }
+
+    result.data.forEach(ref => {
       contenedor.innerHTML += `
         <div>
           <strong>${ref.descripcion || "Sin descripción"}</strong>
