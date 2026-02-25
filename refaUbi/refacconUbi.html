@@ -34,40 +34,33 @@
 
   <!-- Grid -->
   <div id="resultadoUbi" class="row g-4"></div>
+  <div id="paginacion" class="mt-4 d-flex justify-content-center"></div>
 
 </div>
 
 <script>
 
 let refaccionesGlobal = [];
+let paginaActual = 1;
+const porPagina = 12;
 
 document.getElementById("btnUbicadas").addEventListener("click", async () => {
   try {
     const response = await fetch("https://buscador-refaccionesbackend.onrender.com/refacciones/con-ubicacion");
     const result = await response.json();
 
-    const contenedor = document.getElementById("resultadoUbi");
-    const totalCard = document.getElementById("totalCard");
-    const buscadorContainer = document.getElementById("buscadorContainer");
-
-    contenedor.innerHTML = "";
-    totalCard.innerHTML = "";
-
-    if (!result.ok) {
-      contenedor.innerHTML = "<p class='text-danger'>Error al obtener datos</p>";
-      return;
-    }
-
-    if (!result.data || result.data.length === 0) {
-      contenedor.innerHTML = "<p>No hay refacciones con ubicación</p>";
+    if (!result.ok || !result.data) {
+      document.getElementById("resultadoUbi").innerHTML =
+        "<p class='text-danger'>Error al obtener datos</p>";
       return;
     }
 
     refaccionesGlobal = result.data;
+    paginaActual = 1;
 
-    buscadorContainer.classList.remove("d-none");
+    document.getElementById("buscadorContainer").classList.remove("d-none");
 
-    renderizarCards(refaccionesGlobal);
+    renderizarTodo();
 
   } catch (error) {
     console.error("Error:", error);
@@ -75,37 +68,48 @@ document.getElementById("btnUbicadas").addEventListener("click", async () => {
 });
 
 
-function renderizarCards(data) {
+function renderizarTodo() {
+  renderizarCards();
+  renderizarPaginacion();
+}
+
+
+function renderizarCards() {
+
   const contenedor = document.getElementById("resultadoUbi");
   const totalCard = document.getElementById("totalCard");
 
   contenedor.innerHTML = "";
   totalCard.innerHTML = "";
 
-  // Card total
+  const inicio = (paginaActual - 1) * porPagina;
+  const fin = inicio + porPagina;
+
+  const datosPagina = refaccionesGlobal.slice(inicio, fin);
+
   totalCard.innerHTML = `
     <div class="card shadow-sm border-0">
       <div class="card-body text-center">
-        <h4 class="mb-0">
-          Total encontrados:
-          <span class="text-success fw-bold">${data.length}</span>
-        </h4>
+        <h5 class="mb-0">
+          Total registros: 
+          <span class="text-success fw-bold">${refaccionesGlobal.length}</span>
+        </h5>
       </div>
     </div>
   `;
 
-  if (data.length === 0) {
+  if (datosPagina.length === 0) {
     contenedor.innerHTML = "<p>No se encontraron resultados</p>";
     return;
   }
 
-  data.forEach(ref => {
+  datosPagina.forEach(ref => {
     contenedor.innerHTML += `
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="card h-100 shadow-sm border-0">
 
           <img 
-            src="${ref.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen'}" 
+            src="${ref.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen'}"
             class="card-img-top"
             style="height:200px; object-fit:cover;"
           >
@@ -120,7 +124,7 @@ function renderizarCards(data) {
             </p>
 
             <p class="mb-1">
-              <strong>Ubicación:</strong> 
+              <strong>Ubicación:</strong>
               <span class="badge bg-success">
                 ${ref.ubicacion}
               </span>
@@ -138,7 +142,62 @@ function renderizarCards(data) {
 }
 
 
-// 🔎 Buscador en tiempo real
+function renderizarPaginacion() {
+
+  const paginacion = document.getElementById("paginacion");
+  paginacion.innerHTML = "";
+
+  const totalPaginas = Math.ceil(refaccionesGlobal.length / porPagina);
+
+  if (totalPaginas <= 1) return;
+
+  let html = `<nav><ul class="pagination">`;
+
+  html += `
+    <li class="page-item ${paginaActual === 1 ? "disabled" : ""}">
+      <button class="page-link" onclick="cambiarPagina(${paginaActual - 1})">
+        Anterior
+      </button>
+    </li>
+  `;
+
+  for (let i = 1; i <= totalPaginas; i++) {
+    html += `
+      <li class="page-item ${paginaActual === i ? "active" : ""}">
+        <button class="page-link" onclick="cambiarPagina(${i})">
+          ${i}
+        </button>
+      </li>
+    `;
+  }
+
+  html += `
+    <li class="page-item ${paginaActual === totalPaginas ? "disabled" : ""}">
+      <button class="page-link" onclick="cambiarPagina(${paginaActual + 1})">
+        Siguiente
+      </button>
+    </li>
+  `;
+
+  html += `</ul></nav>`;
+
+  paginacion.innerHTML = html;
+}
+
+
+function cambiarPagina(numero) {
+  const totalPaginas = Math.ceil(refaccionesGlobal.length / porPagina);
+
+  if (numero < 1 || numero > totalPaginas) return;
+
+  paginaActual = numero;
+  renderizarTodo();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+// 🔎 Buscador con paginación reiniciada
 document.getElementById("buscador").addEventListener("input", (e) => {
   const texto = e.target.value.toLowerCase();
 
@@ -148,7 +207,10 @@ document.getElementById("buscador").addEventListener("input", (e) => {
     (ref.ubicacion || "").toLowerCase().includes(texto)
   );
 
-  renderizarCards(filtradas);
+  paginaActual = 1;
+  refaccionesGlobal = filtradas;
+
+  renderizarTodo();
 });
 
 </script>
