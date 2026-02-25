@@ -28,7 +28,7 @@
       placeholder="Buscar por nombre, referencia o ubicación..."
     >
   </div>
-
+  <div id="progresoUbicacion" class="mb-4"></div>
   <!-- Card total -->
   <div id="totalCard" class="mb-4"></div>
 
@@ -48,16 +48,27 @@ const porPagina = 12;
 
 document.getElementById("btnUbicadas").addEventListener("click", async () => {
   try {
-    const response = await fetch("https://buscador-refaccionesbackend.onrender.com/refacciones/con-ubicacion");
-    const result = await response.json();
 
-    if (!result.ok || !result.data) {
+    const [respUbicadas, respTodas] = await Promise.all([
+      fetch("https://buscador-refaccionesbackend.onrender.com/refacciones/con-ubicacion"),
+      fetch("https://buscador-refaccionesbackend.onrender.com/refacciones")
+    ]);
+
+    const ubicadas = await respUbicadas.json();
+    const todas = await respTodas.json();
+
+    if (!ubicadas.ok || !todas.ok) {
       document.getElementById("resultadoUbi").innerHTML =
         "<p class='text-danger'>Error al obtener datos</p>";
       return;
     }
 
-    refaccionesOriginal = result.data;
+    const totalGeneral = todas.data.length;
+    const totalConUbicacion = ubicadas.data.length;
+
+    mostrarProgreso(totalGeneral, totalConUbicacion);
+
+    refaccionesOriginal = ubicadas.data;
     refaccionesFiltradas = [...refaccionesOriginal];
     paginaActual = 1;
 
@@ -69,7 +80,6 @@ document.getElementById("btnUbicadas").addEventListener("click", async () => {
     console.error("Error:", error);
   }
 });
-
 
 function renderizarTodo() {
   renderizarCards();
@@ -214,6 +224,37 @@ document.getElementById("buscador").addEventListener("input", (e) => {
   renderizarTodo();
 });
 
+function mostrarProgreso(totalGeneral, totalConUbicacion) {
+
+  const contenedor = document.getElementById("progresoUbicacion");
+
+  const porcentaje = totalGeneral === 0 
+    ? 0 
+    : Math.round((totalConUbicacion / totalGeneral) * 100);
+
+  contenedor.innerHTML = `
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+
+        <div class="d-flex justify-content-between mb-2">
+          <strong>Refacciones ubicadas</strong>
+          <span>${totalConUbicacion} / ${totalGeneral} (${porcentaje}%)</span>
+        </div>
+
+        <div class="progress" style="height: 25px;">
+          <div 
+            class="progress-bar bg-success"
+            role="progressbar"
+            style="width: ${porcentaje}%"
+          >
+            ${porcentaje}%
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
 </script>
 
 </body>
