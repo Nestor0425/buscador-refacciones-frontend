@@ -715,6 +715,11 @@
                                 style="border:none; outline:none; flex:1; min-width:120px;"
                                 placeholder="Buscar por palabras clave">
                             </div>
+                            <!-- 🔥 Botón opcional -->
+    <button type="button" id="btnAgregarTag" 
+      class="btn btn-sm btn-success d-lg-none">
+      Agregar
+    </button>
                         </div>
                         <div class="col-12 col-lg-3">
                             <input type="text" id="buscarTitulo" class="form-control"
@@ -830,6 +835,21 @@ function aplicarPermisos(rol) {
     if (editar) editar.style.display = "none";
   }
 }
+
+const btnAgregarTag = document.getElementById("btnAgregarTag");
+
+btnAgregarTag?.addEventListener("click", () => {
+  const valor = inputTag.value.trim().toLowerCase();
+  if (!valor) return;
+
+  if (!tagsActivos.includes(valor)) {
+    tagsActivos.push(valor);
+    crearTagVisual(valor);
+    aplicarFiltros();
+  }
+
+  inputTag.value = "";
+});
 </script>
         
         <script src="script.js"></script>
