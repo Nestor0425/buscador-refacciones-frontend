@@ -185,6 +185,8 @@ contenedorTags.querySelectorAll(".badge").forEach(t => t.remove());
       modeloSeleccionado = maquinamod; // 🔥 guardamos el modelo
 
       console.log("BUSCANDO POR MODELO:", maquinamod);
+      console.log("CLICK EN:", e.currentTarget);
+console.log("MODELO:", e.currentTarget.dataset.maquinamod);
 
       const res = await fetch(
         `${API}/refacciones-por-maquinamod?maquinamod=${encodeURIComponent(maquinamod)}`
