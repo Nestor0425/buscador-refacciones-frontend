@@ -234,13 +234,14 @@
 }
 
 
-.btn-check-ref {
+.btn-check-ref,
+.btn-fullscreen {
   position: absolute;
   top: 8px;
-  right: 8px;
+  /* right: 8px; */
   z-index: 2;
 
-  background: white;
+  background: transparent;
   border-radius: 50%;
   border: none;
   width: 32px;
@@ -258,6 +259,17 @@
   font-size: 1.2rem;
 }
 
+.btn-check-ref {
+  right: 8px;
+}
+
+.btn-fullscreen {
+  left: 8px;
+}
+
+.btn-fullscreen i {
+  font-size: 1.1rem;
+}
 /* TITULOS POR COLORES */
 
 .titulo-default {
@@ -783,6 +795,14 @@
     </section>
         </main>
 
+        <div class="modal fade" id="modalImagen" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-transparent border-0">
+      <img id="imgFullscreen" class="w-100 rounded">
+    </div>
+  </div>
+</div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
 document.addEventListener("DOMContentLoaded", async () => {
@@ -871,6 +891,19 @@ btnAgregarTag?.addEventListener("click", () => {
   }
 
   inputTag.value = "";
+});
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".btn-fullscreen");
+  if (!btn) return;
+
+  const imgSrc = btn.dataset.img;
+
+  const img = document.getElementById("imgFullscreen");
+  img.src = imgSrc;
+
+  const modal = new bootstrap.Modal(document.getElementById("modalImagen"));
+  modal.show();
 });
 </script>
         

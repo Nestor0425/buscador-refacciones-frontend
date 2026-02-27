@@ -286,6 +286,10 @@ function mostrarResultados(lista) {
         <button class="btn-check-ref" data-id="${r.id}">
   <i class="bi ${r.completada ? 'bi-check-circle-fill text-success' : 'bi-circle'}"></i>
 </button>
+
+<button class="btn-fullscreen" data-img="${r.imagen || 'no-image.jpg'}">
+      <i class="bi bi-fullscreen"></i>
+    </button>
           <img src="${r.imagen || 'no-image.jpg'}" 
                alt="${r.nombreprod}" 
                onerror="this.onerror=null; this.src='no-image.jpg';">
