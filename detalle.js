@@ -307,3 +307,13 @@ function quitarMaquina(id) {
 
   renderChips();
 }
+
+btnEliminarImagen.addEventListener("click", async () => {
+  if (!confirm("¿Eliminar imagen?")) return;
+
+  await fetch(`/refacciones/${id}/imagen`, {
+    method: "DELETE"
+  });
+
+  location.reload();
+});
