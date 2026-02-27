@@ -283,6 +283,9 @@ function mostrarResultados(lista) {
 
       card.innerHTML = `
         <div class="ref-img">
+        <button class="btn-check-ref" data-id="${r.id}">
+  <i class="bi ${r.completada ? 'bi-check-circle-fill text-success' : 'bi-circle'}"></i>
+</button>
           <img src="${r.imagen || 'no-image.jpg'}" 
                alt="${r.nombreprod}" 
                onerror="this.onerror=null; this.src='no-image.jpg';">
@@ -682,4 +685,23 @@ function actualizarSelectsDesdeResultados(data) {
   }
 }
 
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".btn-check-ref");
+  if (!btn) return;
 
+  const id = btn.dataset.id;
+
+  const res = await fetch(`${API}/refacciones/${id}/completar`, {
+    method: "PATCH"
+  });
+
+  const data = await res.json();
+
+  const icon = btn.querySelector("i");
+
+  if (data.completada) {
+    icon.className = "bi bi-check-circle-fill text-success";
+  } else {
+    icon.className = "bi bi-circle";
+  }
+});
