@@ -79,12 +79,13 @@ document.getElementById("form").addEventListener("submit", async e => {
     fd.append("imagen", fileInput.files[0]);
   }
 
-  // const compatibilidad = [];
-  // document
-  //   .querySelectorAll('#lista-maquinas input[type="checkbox"]:checked')
-  //   .forEach(cb => compatibilidad.push(cb.value));
+  const imagenUrlInput = document.getElementById("imagenUrl");
 
-  // fd.append("compatibilidad", JSON.stringify(compatibilidad));
+if (imagenUrlInput && imagenUrlInput.value.trim() !== "") {
+  fd.append("imagenUrl", imagenUrlInput.value.trim());
+}
+
+  
 fd.append(
   "compatibilidad",
   JSON.stringify(maquinasSeleccionadas)
@@ -137,79 +138,7 @@ function renderCompatibles(maquinas) {
   });
 }
 
-// let maquinasDisponibles = [];
-// let maquinasSeleccionadas = [];
 
-// // Simulación (aquí deberías cargar desde tu API)
-// maquinasDisponibles = [
-//   {id:1, nombre:"AOKI SBIII-500"},
-//   {id:2, nombre:"AOKI SBIII-250"},
-//   {id:3, nombre:"NISSEI FNX-300"},
-//   {id:4, nombre:"NISSEI FNX-100"}
-// ];
-
-// const listaModal = document.getElementById("lista-maquinas-modal");
-
-// function renderModal(lista) {
-//   listaModal.innerHTML = "";
-
-//   lista.forEach(m => {
-//     listaModal.innerHTML += `
-//       <div class="col-md-6">
-//         <div class="machine-item">
-//           <input type="checkbox"
-//                  value="${m.id}"
-//                  ${maquinasSeleccionadas.includes(m.id) ? "checked" : ""}>
-//           ${m.nombre}
-//         </div>
-//       </div>
-//     `;
-//   });
-// }
-
-// renderModal(maquinasDisponibles);
-
-// // Buscador
-// document.getElementById("buscarMaquina").addEventListener("input", e => {
-//   const texto = e.target.value.toLowerCase();
-//   const filtradas = maquinasDisponibles.filter(m =>
-//     m.nombre.toLowerCase().includes(texto)
-//   );
-//   renderModal(filtradas);
-// });
-
-// // Confirmar selección
-// document.getElementById("confirmarMaquinas").addEventListener("click", () => {
-//   const checks = listaModal.querySelectorAll("input:checked");
-//   maquinasSeleccionadas = Array.from(checks).map(c => Number(c.value));
-
-//   renderChips();
-//   bootstrap.Modal.getInstance(
-//     document.getElementById("modalMaquinas")
-//   ).hide();
-// });
-
-// function renderChips(){
-//   const cont = document.getElementById("lista-maquinas");
-//   cont.innerHTML = "";
-
-//   maquinasSeleccionadas.forEach(id=>{
-//     const maquina = maquinasDisponibles.find(m=>m.id===id);
-//     cont.innerHTML += `
-//       <span class="compat-chip">
-//         ${maquina.nombre}
-//         <button onclick="quitarMaquina(${id})">
-//           <i class="bi bi-x"></i>
-//         </button>
-//       </span>
-//     `;
-//   });
-// }
-
-// function quitarMaquina(id){
-//   maquinasSeleccionadas = maquinasSeleccionadas.filter(m=>m!==id);
-//   renderChips();
-// }
 let maquinasDisponibles = [];
 let maquinasSeleccionadas = [];
 
@@ -232,80 +161,7 @@ async function inicializarMaquinas() {
   renderChips();
 }
 
-/* =========================
-   RENDER MODAL
-========================= */
-// function renderModal(lista) {
-//   const listaModal = document.getElementById("lista-maquinas-modal");
-//   if (!listaModal) return;
 
-//   listaModal.innerHTML = "";
-
-//   lista.forEach(m => {
-//     const checked = maquinasSeleccionadas.includes(Number(m.id)) ? "checked" : "";
-
-
-//     listaModal.innerHTML += `
-//       <div class="col-md-6">
-//         <div class="machine-item">
-//           <input type="checkbox"
-//                  value="${m.id}"
-//                  ${checked}>
-//           ${m.maquinamod} ${m.maquinaesp}
-//         </div>
-//       </div>
-//     `;
-//   });
-// }
-// function renderModal(lista) {
-//   console.log(lista);
-//   const listaModal = document.getElementById("lista-maquinas-modal");
-//   if (!listaModal) return;
-
-//   listaModal.innerHTML = "";
-
-//   // Agrupar por categoriaprin
-//   const grupos = {};
-
-//   lista.forEach(m => {
-//     const categoria = m.categoriaprin || "otros";
-
-//     if (!grupos[categoria]) {
-//       grupos[categoria] = [];
-//     }
-
-//     grupos[categoria].push(m);
-//   });
-
-//   // Renderizar por categoría
-//   Object.keys(grupos).forEach(categoria => {
-
-//     // Título de la sección
-//     listaModal.innerHTML += `
-//       <div class="col-12 mt-3">
-//         <h5>${categoria.toUpperCase()}</h5>
-//         <hr>
-//       </div>
-//     `;
-
-//     grupos[categoria].forEach(m => {
-//       const checked = maquinasSeleccionadas.includes(Number(m.id)) ? "checked" : "";
-
-//       listaModal.innerHTML += `
-//         <div class="col-md-6">
-//           <div class="machine-item">
-//             <input type="checkbox"
-//                    value="${m.id}"
-//                    data-categoria="${m.categoriaprin}"
-//                    ${checked}>
-//             ${m.maquinamod || ""} ${m.maquinaesp || ""}
-//           </div>
-//         </div>
-//       `;
-//     });
-
-//   });
-// }
 function renderModal(lista) {
   console.log(lista);
 
