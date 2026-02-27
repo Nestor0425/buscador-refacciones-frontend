@@ -335,6 +335,44 @@
   z-index: 1300; /* encima de modal */
   cursor: zoom-out;
 }
+
+#visorImagen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999; /* más alto que tu aside */
+}
+
+.visor-hidden {
+  display: none !important;
+}
+
+#visorImagen img {
+  max-width: 90%;
+  max-height: 90%;
+  transition: transform 0.2s ease;
+  cursor: grab;
+}
+
+.visor-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.visor-controls button {
+  background: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
         </style>
         
     </head>
@@ -803,6 +841,15 @@
   </div>
 </div>
 
+<div id="visorImagen" class="visor-hidden">
+  <div class="visor-controls">
+    <button id="zoomIn">+</button>
+    <button id="zoomOut">−</button>
+    <button id="cerrarVisor">✕</button>
+  </div>
+  <img id="visorImg">
+</div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
 document.addEventListener("DOMContentLoaded", async () => {
@@ -893,17 +940,37 @@ btnAgregarTag?.addEventListener("click", () => {
   inputTag.value = "";
 });
 
+let escala = 1;
+
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".btn-fullscreen");
   if (!btn) return;
 
-  const imgSrc = btn.dataset.img;
+  const src = btn.dataset.img;
 
-  const img = document.getElementById("imgFullscreen");
-  img.src = imgSrc;
+  const visor = document.getElementById("visorImagen");
+  const img = document.getElementById("visorImg");
 
-  const modal = new bootstrap.Modal(document.getElementById("modalImagen"));
-  modal.show();
+  escala = 1;
+  img.style.transform = "scale(1)";
+  img.src = src;
+
+  visor.classList.remove("visor-hidden");
+});
+
+document.getElementById("cerrarVisor").addEventListener("click", () => {
+  document.getElementById("visorImagen").classList.add("visor-hidden");
+});
+
+document.getElementById("zoomIn").addEventListener("click", () => {
+  escala += 0.2;
+  document.getElementById("visorImg").style.transform = `scale(${escala})`;
+});
+
+document.getElementById("zoomOut").addEventListener("click", () => {
+  escala -= 0.2;
+  if (escala < 1) escala = 1;
+  document.getElementById("visorImg").style.transform = `scale(${escala})`;
 });
 </script>
         
