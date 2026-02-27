@@ -89,6 +89,15 @@
 
 </div>
 
+<div id="visorImagen" class="visor-hidden">
+  <div class="visor-controls">
+    <button id="zoomIn">+</button>
+    <button id="zoomOut">−</button>
+    <button id="cerrarVisor">✕</button>
+  </div>
+  <img id="visorImg">
+</div>
+
 <script>
 
 let refaccionesOriginal = [];
@@ -463,14 +472,7 @@ img.addEventListener("touchend", () => {
 </script>
 
 
-<div id="visorImagen" class="visor-hidden">
-  <div class="visor-controls">
-    <button id="zoomIn">+</button>
-    <button id="zoomOut">−</button>
-    <button id="cerrarVisor">✕</button>
-  </div>
-  <img id="visorImg">
-</div>
+
 
 </body>
 </html>
