@@ -355,6 +355,9 @@
   max-height: 90%;
   transition: transform 0.2s ease;
   cursor: grab;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
 }
 
 .visor-controls {
@@ -941,36 +944,87 @@ btnAgregarTag?.addEventListener("click", () => {
 });
 
 let escala = 1;
+let posX = 0;
+let posY = 0;
+let arrastrando = false;
+let inicioX = 0;
+let inicioY = 0;
+
+const visor = document.getElementById("visorImagen");
+const img = document.getElementById("visorImg");
+
+function actualizarTransform() {
+  img.style.transform = `translate(${posX}px, ${posY}px) scale(${escala})`;
+}
 
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".btn-fullscreen");
   if (!btn) return;
 
-  const src = btn.dataset.img;
-
-  const visor = document.getElementById("visorImagen");
-  const img = document.getElementById("visorImg");
-
   escala = 1;
-  img.style.transform = "scale(1)";
-  img.src = src;
+  posX = 0;
+  posY = 0;
+  actualizarTransform();
 
+  img.src = btn.dataset.img;
   visor.classList.remove("visor-hidden");
 });
 
 document.getElementById("cerrarVisor").addEventListener("click", () => {
-  document.getElementById("visorImagen").classList.add("visor-hidden");
+  visor.classList.add("visor-hidden");
 });
 
 document.getElementById("zoomIn").addEventListener("click", () => {
   escala += 0.2;
-  document.getElementById("visorImg").style.transform = `scale(${escala})`;
+  actualizarTransform();
 });
 
 document.getElementById("zoomOut").addEventListener("click", () => {
   escala -= 0.2;
   if (escala < 1) escala = 1;
-  document.getElementById("visorImg").style.transform = `scale(${escala})`;
+  actualizarTransform();
+});
+
+
+// 🖱 MOUSE DRAG
+img.addEventListener("mousedown", (e) => {
+  if (escala === 1) return;
+  arrastrando = true;
+  inicioX = e.clientX - posX;
+  inicioY = e.clientY - posY;
+  img.style.cursor = "grabbing";
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!arrastrando) return;
+  posX = e.clientX - inicioX;
+  posY = e.clientY - inicioY;
+  actualizarTransform();
+});
+
+document.addEventListener("mouseup", () => {
+  arrastrando = false;
+  img.style.cursor = "grab";
+});
+
+
+// 📱 TOUCH
+img.addEventListener("touchstart", (e) => {
+  if (escala === 1) return;
+  arrastrando = true;
+  inicioX = e.touches[0].clientX - posX;
+  inicioY = e.touches[0].clientY - posY;
+});
+
+img.addEventListener("touchmove", (e) => {
+  if (!arrastrando) return;
+  posX = e.touches[0].clientX - inicioX;
+  posY = e.touches[0].clientY - inicioY;
+  actualizarTransform();
+});
+
+img.addEventListener("touchend", () => {
+  arrastrando = false;
 });
 </script>
         
