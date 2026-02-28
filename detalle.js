@@ -34,11 +34,12 @@ async function cargarDetalle() {
 
   // ✅ mostrar imagen si existe
   if (r.imagen) {
-    const img = document.getElementById("preview-imagen");
-    if (img) {
-      img.src = r.imagen;
-      img.style.display = "block";
-    }
+    // const img = document.getElementById("preview-imagen");
+    if (r.imagen) {
+  preview.src = r.imagen;
+  preview.style.display = "block";
+  btnQuitar.style.display = "block";
+}
   }
 }
 
