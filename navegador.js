@@ -784,7 +784,7 @@ document.addEventListener("click", async (e) => {
 
 async function cargarDestacadas() {
   try {
-    const res = await fetch(`${API}/refacciones/destacada`);
+    const res = await fetch(`${API}/refacciones/destacadas`);
 
     if (!res.ok) {
       throw new Error(`Error ${res.status}`);
