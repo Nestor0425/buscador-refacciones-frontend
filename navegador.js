@@ -783,7 +783,7 @@ document.addEventListener("click", async (e) => {
 });
 
 async function cargarDestacadas() {
-  const res = await fetch(`${API}/refacciones/destacadas`);
+  const res = await fetch(`/refacciones/destacadas`);
   const data = await res.json();
 
   renderDestacadas(data);
@@ -828,9 +828,9 @@ document.addEventListener("click", async (e) => {
 
   const id = btn.dataset.id;
 
-  await fetch(`${API}/refacciones/${id}/broadcast`, {
-    method: "PUT"
-  });
+  await fetch(`/refacciones/${id}/broadcast`, {
+  method: "PUT"
+});
 
   // recargar destacadas
   cargarDestacadas();
