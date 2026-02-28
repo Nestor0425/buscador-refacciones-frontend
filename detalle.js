@@ -311,9 +311,12 @@ function quitarMaquina(id) {
 btnEliminarImagen.addEventListener("click", async () => {
   if (!confirm("¿Eliminar imagen?")) return;
   console.log("CLICK FUNCIONANDO");
-  await fetch(`/refacciones/${id}/imagen`, {
+  await fetch(
+  `https://buscador-refaccionesbackend.onrender.com/refacciones/${id}/imagen`,
+  {
     method: "DELETE"
-  });
+  }
+);
 
   location.reload();
 });
