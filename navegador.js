@@ -784,7 +784,7 @@ document.addEventListener("click", async (e) => {
 
 async function cargarDestacadas() {
   try {
-    const res = await fetch(`${API}/refacciones/destacadas`);
+    const res = await fetch(`${API}/refacciones/destacada`);
 
     if (!res.ok) {
       throw new Error(`Error ${res.status}`);
@@ -794,7 +794,7 @@ async function cargarDestacadas() {
     renderDestacadas(data);
 
   } catch (error) {
-    console.error("Error cargando destacadas:", error);
+    console.error("Error cargando destacada:", error);
   }
 }
 
