@@ -764,84 +764,94 @@ document.addEventListener("click", async (e) => {
   }
 });
 
-// Un solo listener para manejar ambos botones (el de la lista general y el del dashboard)
-document.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".btn-broadcast, .btn-desactivar");
-  if (!btn) return;
-
-  const id = btn.dataset.id;
-
-  try {
-    const res = await fetch(`${API}/refacciones/${id}/broadcast`, { method: "PUT" });
-    
-    if (res.ok) {
-      // 1. Si es el botón de la lista principal, cambiamos su color
-      if (btn.classList.contains("btn-broadcast")) {
-        const icon = btn.querySelector("i");
-        icon.classList.toggle("text-primary");
-      }
-      
-      // 2. IMPORTANTE: Siempre recargamos el dashboard para que se vea el cambio
-      await cargarDestacadas(); 
-    }
-  } catch (error) {
-    console.error("Error al actualizar:", error);
-  }
-});
-
-// Al cargar la página por primera vez
-document.addEventListener("DOMContentLoaded", cargarDestacadas);
-
+// 1. Función para obtener datos y pintar el Dashboard
 async function cargarDestacadas() {
+  const contenedor = document.getElementById("contenedorResultadosDsah");
+  
+  // Si no estamos en la página que tiene el dashboard, salimos silenciosamente
+  if (!contenedor) return; 
+
   try {
     const res = await fetch(`${API}/refacciones/destacadas`);
-
-    if (!res.ok) {
-      throw new Error(`Error ${res.status}`);
-    }
-
+    if (!res.ok) throw new Error("Error en la respuesta del servidor");
+    
     const data = await res.json();
     renderDestacadas(data);
-
   } catch (error) {
-    console.error("Error cargando destacada:", error);
+    console.error("Error cargando destacadas:", error);
   }
 }
 
+// 2. Función para generar el HTML del Dashboard
 function renderDestacadas(lista) {
   const contenedor = document.getElementById("contenedorResultadosDsah");
 
-  if (!lista.length) {
-    contenedor.innerHTML = "";
+  if (lista.length === 0) {
+    contenedor.innerHTML = `
+      <div class="alert alert-light text-center border shadow-sm">
+        <i class="bi bi-info-circle"></i> No hay refacciones en seguimiento.
+      </div>`;
     return;
   }
 
   contenedor.innerHTML = `
     <div class="card w-100 shadow-sm">
-      <div class="card-header fw-bold">
-        <i class="bi bi-broadcast text-primary"></i>
-        Refacciones destacadas
+      <div class="card-header fw-bold bg-white d-flex justify-content-between">
+        <span><i class="bi bi-broadcast text-primary"></i> Panel de Seguimiento</span>
+        <span class="badge bg-primary">${lista.length}</span>
       </div>
       <ul class="list-group list-group-flush">
         ${lista.map(r => `
-          <li class="list-group-item d-flex justify-content-between align-items-center">
+          <li class="list-group-item d-flex justify-content-between align-items-center py-3">
             <div>
-              <strong>${r.nombreprod}</strong><br>
-              <small>${r.modelo || '-'} | ${r.ubicacion || 'Sin ubicación'}</small>
+              <strong class="d-block">${r.nombreprod}</strong>
+              <small class="text-muted">${r.modelo || 'S/M'} | <i class="bi bi-geo-alt"></i> ${r.ubicacion || 'S/U'}</small>
             </div>
-
-            <button class="btn btn-sm btn-outline-danger btn-desactivar"
-                    data-id="${r.id}">
-              <i class="bi bi-x-circle"></i>
+            <button class="btn btn-outline-danger btn-sm btn-desactivar" data-id="${r.id}" title="Quitar seguimiento">
+              <i class="bi bi-x-lg"></i>
             </button>
           </li>
         `).join("")}
       </ul>
     </div>
   `;
-} 
+}
 
-// document.addEventListener("click", async (e) => {
+// 3. Listener Global para clics (Maneja Activar y Desactivar)
+document.addEventListener("click", async (e) => {
+  // Detectar si se clickeó el botón de la lista general O el del dashboard
+  const btn = e.target.closest(".btn-broadcast, .btn-desactivar");
+  if (!btn) return;
+
+  const id = btn.dataset.id;
+  const icono = btn.querySelector("i");
+
+  try {
+    // Deshabilitar botón temporalmente para evitar doble click
+    btn.disabled = true;
+
+    const res = await fetch(`${API}/refacciones/${id}/broadcast`, { method: "PUT" });
+    const resultado = await res.json();
+
+    if (resultado.ok) {
+      // Si el botón es el de la lista general, cambiamos su color visualmente
+      if (btn.classList.contains("btn-broadcast")) {
+        btn.classList.toggle("active"); // Opcional: clase CSS para marcarlo
+        if(icono) icono.classList.toggle("text-primary");
+      }
+
+      // SIEMPRE actualizamos el dashboard para reflejar el cambio
+      await cargarDestacadas();
+    }
+  } catch (error) {
+    alert("No se pudo actualizar el estado.");
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// 4. Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", cargarDestacadas);
 //   const btn = e.target.closest(".btn-desactivar");
 //   if (!btn) return;
 
