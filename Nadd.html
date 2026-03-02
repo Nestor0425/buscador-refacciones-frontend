@@ -415,6 +415,29 @@
 .ref-lista .ref-actions {
   margin-top: 10px;
 }
+
+/* Contenedor lista */
+#resultados.lista-modo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Item individual */
+.ref-lista-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  transition: 0.2s ease;
+}
+
+.ref-lista-item:hover {
+  background: #f9fafb;
+}
         </style>
         
     </head>
