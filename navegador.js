@@ -316,6 +316,20 @@ function mostrarResultados(lista) {
            alt="${r.nombreprod}"
            class="card-img-top"
            onerror="this.onerror=null; this.src='no-image.jpg';">
+
+           <div class="card-actions">
+         <button class="btn-check-ref" data-id="${r.id}">
+           <i class="bi ${r.completada ? 'bi-check-circle-fill text-success' : 'bi-circle'}"></i>
+         </button>
+
+        <button class="btn-broadcast" data-id="${r.id}">
+           <i class="bi ${r.destacada ? 'bi-broadcast text-primary' : 'bi-broadcast'}"></i>
+         </button>
+
+         <button class="btn-fullscreen" data-img="${r.imagen || 'no-image.jpg'}">
+           <i class="bi bi-fullscreen"></i>
+         </button>
+       </div>
     </div>
 
     <div class="ref-body">
