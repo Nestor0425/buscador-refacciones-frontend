@@ -3,6 +3,7 @@ let modeloSeleccionado = "";
 let resultadosActuales = [];
 let tagsActivos = [];
 let modoGlobal = false;
+let datosActuales = [];
 
 // =========================
 // 🔒 Validación de sesión
@@ -295,6 +296,7 @@ function activarBoton(tipo) {
 }
 
 function mostrarResultados(lista) {
+  datosActuales = lista;
   const cont = document.getElementById("resultados");
   if (!cont) return;
   
@@ -305,9 +307,43 @@ function mostrarResultados(lista) {
 
     lista.forEach(r => {
       const card = document.createElement("div");
-      card.className = vistaActual === "cards" 
-  ? "ref-card"
-  : "ref-card ref-lista";
+      if (vistaActual === "cards") {
+  card.className = "ref-card";
+
+  card.innerHTML = `
+    <div class="ref-img">
+      <img src="${r.imagen || 'no-image.jpg'}"
+           alt="${r.nombreprod}"
+           class="card-img-top"
+           onerror="this.onerror=null; this.src='no-image.jpg';">
+    </div>
+
+    <div class="ref-body">
+      <h3 class="ref-title">${r.nombreprod}</h3>
+      <div class="ref-modelo">Modelo: <strong>${r.modelo || '-'}</strong></div>
+      <div class="ref-cantidad">Cantidad: <strong>${r.cantidad} ${r.unidad || ''}</strong></div>
+      <div class="ref-ubicacion">📍 ${r.ubicacion || 'Sin ubicación'}</div>
+      <div class="ref-actions">
+        <a href="detalle.html?id=${r.id}" class="btn btn-primary btn-sm">Ver / Editar</a>
+      </div>
+    </div>
+  `;
+
+} else {
+
+  card.className = "ref-lista-item";
+
+  card.innerHTML = `
+    <div class="lista-nombre">${r.nombreprod}</div>
+    <div class="lista-ref">${r.refinterna || '-'}</div>
+    <div class="lista-ubicacion">${r.ubicacion || 'Sin ubicación'}</div>
+    <div>
+      <a href="detalle.html?id=${r.id}" class="btn btn-sm btn-outline-primary">
+        Editar
+      </a>
+    </div>
+  `;
+}
      
 
       card.dataset.nombreprod = (r.nombreprod || "").toLowerCase();
@@ -402,13 +438,15 @@ card.innerHTML = `
 }
 
 function actualizarVista() {
-  cardsDOM.forEach(card => {
-    if (vistaActual === "cards") {
-      card.classList.remove("ref-lista");
-    } else {
-      card.classList.add("ref-lista");
-    }
-  });
+  const cont = document.getElementById("resultados");
+
+  if (vistaActual === "lista") {
+    cont.classList.add("lista-modo");
+  } else {
+    cont.classList.remove("lista-modo");
+  }
+
+  mostrarResultados(datosActuales); // vuelve a renderizar
 }
 
 function attachModalListeners(lista) {
