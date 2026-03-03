@@ -467,52 +467,124 @@
                 </div>
             </aside>
 
-            <section class="content-area">
-        <div class="container-fluid">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <h3 class="fw-bold mb-0" id="tituloRefacciones">Refacciones IEMCO</h3>
-        
-        <div class="d-flex gap-2 flex-wrap justify-content-start justify-content-md-end">
             
-            <div class="d-flex align-items-center bg-white border rounded-3 px-3 py-1 shadow-sm">
-                <i class="bi bi-box-seam text-primary me-2"></i>
-                <div>
-                    <small class="text-muted d-block" style="font-size: 0.7rem;">Total</small>
-                    <span class="fw-bold" style="font-size: 0.9rem;" id="totalRefacciones">Cargando...</span>
-                </div>
-            </div>
+            <section class="content-area">
+  <div class="container-fluid">
 
-            <div class="d-flex align-items-center bg-white border rounded-3 px-3 py-1 shadow-sm">
-                <i class="bi bi-plus-circle text-success me-2"></i>
-                <div>
-                    <small class="text-muted d-block" style="font-size: 0.7rem;">Último</small>
-                    <span class="fw-bold" style="font-size: 0.9rem;" id="ultimoProducto">Cargando...</span>
-                    <div id="ultimasEtiquetas"></div>
-                </div>
-            </div>
-
-            <div class="d-flex align-items-center bg-white border rounded-3 px-3 py-1 shadow-sm">
-                <i class="bi bi-clock-history text-warning me-2"></i>
-                <div>
-                    <small class="text-muted d-block" style="font-size: 0.7rem;">Actualizado</small>
-                    <span class="fw-bold" style="font-size: 0.9rem;" id="ultimaActualizacion">Cargando...</span>
-                </div>
-            </div>
-
-        </div>
+    <!-- 🔥 TÍTULO CENTRADO -->
+    <div class="text-center mb-4">
+      <h1 class="fw-bold display-5" id="tituloRefacciones">
+        Refacciones IEMCO
+      </h1>
+      <p class="text-muted mb-0">Panel general de control</p>
     </div>
 
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-3">
-                                        <div class="d-flex justify-content-end gap-2 mb-3">
-  <button id="btnVistaCards" class="btn btn-sm btn-primary active">
-    <i class="bi bi-grid"></i> Cards
-  </button>
-  <button id="btnVistaLista" class="btn btn-sm btn-outline-primary">
-    <i class="bi bi-list"></i> Lista
-  </button>
-</div>
-                    <form class="row g-3" id="formFiltros">
+    <!-- 🔹 RESUMEN PRINCIPAL -->
+    <div class="row g-3 mb-4">
+
+      <!-- Total -->
+      <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm text-center h-100">
+          <div class="card-body">
+            <i class="bi bi-box-seam text-primary fs-2"></i>
+            <h6 class="text-muted mt-2">Total de Refacciones</h6>
+            <h4 class="fw-bold" id="totalRefacciones">Cargando...</h4>
+          </div>
+        </div>
+      </div>
+
+      <!-- Último -->
+      <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm text-center h-100">
+          <div class="card-body">
+            <i class="bi bi-plus-circle text-success fs-2"></i>
+            <h6 class="text-muted mt-2">Último Producto</h6>
+            <h5 class="fw-bold" id="ultimoProducto">Cargando...</h5>
+            <div id="ultimasEtiquetas"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actualizado -->
+      <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm text-center h-100">
+          <div class="card-body">
+            <i class="bi bi-clock-history text-warning fs-2"></i>
+            <h6 class="text-muted mt-2">Última Actualización</h6>
+            <h5 class="fw-bold" id="ultimaActualizacion">Cargando...</h5>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 🔹 SEGUIMIENTO + FUTURAS -->
+    <div class="row g-3 mb-4">
+
+      <!-- Card grande seguimiento -->
+      <div class="col-12 col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">
+              <i class="bi bi-graph-up text-primary me-2"></i>
+              Seguimiento
+            </h5>
+
+            <p class="text-muted">
+              Aquí puedes poner estadísticas, progreso de ubicación de refacciones,
+              porcentaje completado, gráficas, etc.
+            </p>
+
+            <!-- Ejemplo -->
+            <div class="progress mt-3">
+              <div class="progress-bar bg-success" style="width: 40%;">
+                40%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cards futuras -->
+      <div class="col-12 col-lg-3">
+        <div class="card border-0 shadow-sm h-100 text-center">
+          <div class="card-body">
+            <h6 class="fw-bold">Card futura 1</h6>
+            <p class="text-muted small">
+              Aquí puedes meter alertas, top modelos, etc.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-3">
+        <div class="card border-0 shadow-sm h-100 text-center">
+          <div class="card-body">
+            <h6 class="fw-bold">Card futura 2</h6>
+            <p class="text-muted small">
+              Espacio listo para algo poderoso después.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 🔹 FORM FILTROS (ya lo ocultas con JS) -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body p-3">
+        
+        <!-- Botones vista -->
+        <div class="d-flex justify-content-end gap-2 mb-3">
+          <button id="btnVistaCards" class="btn btn-sm btn-primary active">
+            <i class="bi bi-grid"></i> Cards
+          </button>
+          <button id="btnVistaLista" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-list"></i> Lista
+          </button>
+        </div>
+
+         <form class="row g-3" id="formFiltros">
                         <div class="col-12 col-lg-4"> 
                             <div id="contenedorTags" class="form-control d-flex flex-wrap gap-2 align-items-center">
                                 <input type="text" id="inputTag" 
@@ -552,18 +624,17 @@
                             </select>
                         </div>
                     </form>
+        
+      </div>
+    </div>
 
-                </div>
-            </div>
+    <!-- 🔹 RESULTADOS -->
+    <div class="ref-container" id="resultados">
+      <div id="contenedorResultados"></div>
+      <div id="contenedorResultadosDsah"></div>
+    </div>
 
-            <div class="ref-container" id="resultados">              
-                <div id="contenedorResultados"></div>
-                <div id="contenedorResultadosDsah">
-        </div>
-
-            </div>
- 
-        </div>
+  </div>
             </section>
         </main>
 
