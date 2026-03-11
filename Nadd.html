@@ -540,14 +540,7 @@
       <!-- Cards futuras -->
       <div class="col-12 col-lg-3">
         <div class="card border-0 shadow-sm h-100 text-center">
-            <!-- hahdkakh -->
-            <div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <h5 class="card-title">Distribución de ubicaciones</h5>
-    <canvas id="graficaUbicaciones"></canvas>
-  </div>
-</div> 
-          <!-- dakdkaj -->
+            
         </div>
       </div>
 
@@ -826,75 +819,6 @@ img.addEventListener("touchend", () => {
 });
 
 
-// aghagdjaj
-function calcularUbicaciones(refacciones){
-
-  const conteo = {
-    A1:0,
-    A2:0,
-    A3:0,
-    A4:0,
-    A5:0,
-    SIN:0,
-    OTROS:0
-  };
-
-  refacciones.forEach(ref => {
-
-    const ubi = (ref.ubicacion || "").trim();
-
-    if(!ubi){
-      conteo.SIN++;
-      return;
-    }
-
-    if(ubi.startsWith("A")){
-      const zona = ubi.substring(0,2).toUpperCase();
-
-      if(conteo[zona] !== undefined){
-        conteo[zona]++;
-      }else{
-        conteo.OTROS++;
-      }
-
-    }else{
-      conteo.OTROS++;
-    }
-
-  });
-
-  return conteo;
-}
-
-function crearGraficaUbicaciones(refacciones){
-
-  const conteo = calcularUbicaciones(refacciones);
-
-  const labels = Object.keys(conteo);
-  const valores = Object.values(conteo);
-
-  const ctx = document.getElementById("graficaUbicaciones");
-
-  new Chart(ctx,{
-    type:"doughnut",
-    data:{
-      labels: labels,
-      datasets:[{
-        data: valores
-      }]
-    },
-    options:{
-      responsive:true,
-      plugins:{
-        legend:{
-          position:"bottom"
-        }
-      }
-    }
-  });
-
-}
-// adjadbxkabdkbabkj
         </script>
         
         <script src="script.js"></script>
