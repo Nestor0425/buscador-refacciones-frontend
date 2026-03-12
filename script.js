@@ -137,7 +137,7 @@ mostrarUltimosProductos();
 
 async function cargarLogs() {
 
-  const res = await fetch(`${API}/logs-db`);
+  const res = await fetch(`${API_URL}/logs-db`);
   const logs = await res.json();
 
   const tabla = document.getElementById("tablaLogs");
