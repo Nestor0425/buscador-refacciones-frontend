@@ -674,38 +674,9 @@
             </div>
             
 
-            <div id="modalMapa" class="modal-ubicacion" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center; padding:20px;">
-    <div style="background:white; border-radius:8px; max-width:500px; width:100%; overflow:hidden; box-shadow:0 10px 25px rgba(0,0,0,0.3);">
-        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:between; align-items:center;">
-            <h4 id="mapaTitulo" style="margin:0; color:#7e8990;">Ubicación: <span id="ubicacionTextoDisplay" style="color:#007a33"></span></h4>
-            <button onclick="cerrarMapa()" style="border:none; background:none; font-size:24px; cursor:pointer;">&times;</button>
-        </div>
-        <div style="padding:20px; text-align:center;">
-            <svg viewBox="0 0 200 120" id="svgAlmacen" style="width:100%; height:auto;">
-                <rect class="pasillo" id="pasillo-A" x="20" y="20" width="25" height="80" fill="#cbd5e1" rx="2" />
-                <rect class="pasillo" id="pasillo-B" x="65" y="20" width="25" height="80" fill="#cbd5e1" rx="2" />
-                <rect class="pasillo" id="pasillo-C" x="110" y="20" width="25" height="80" fill="#cbd5e1" rx="2" />
-                <rect class="pasillo" id="pasillo-D" x="155" y="20" width="25" height="80" fill="#cbd5e1" rx="2" />
-                
-                <text x="28" y="15" font-size="8" fill="#999">A</text>
-                <text x="73" y="15" font-size="8" fill="#999">B</text>
-                <text x="118" y="15" font-size="8" fill="#999">C</text>
-                <text x="163" y="15" font-size="8" fill="#999">D</text>
-            </svg>
-            <div id="infoDetalle" style="margin-top:15px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div style="background:#f8f9fa; padding:10px; border-radius:4px; border:1px solid #eee;">
-                    <small style="color:#666">Sección / Estante</small>
-                    <div id="txtSeccion" style="font-weight:bold; font-size:1.1rem;">-</div>
-                </div>
-                <div style="background:#f8f9fa; padding:10px; border-radius:4px; border:1px solid #eee;">
-                    <small style="color:#666">Nivel</small>
-                    <div id="txtNivel" style="font-weight:bold; font-size:1.1rem;">-</div>
-                </div>
-            </div>
-        </div>
-        <button onclick="cerrarMapa()" style="width:100%; padding:15px; border:none; background:#007a33; color:white; font-weight:bold; cursor:pointer;">CERRAR</button>
+            <div id="contenedorMapaDinamico" style="background:#f1f3f5; border-radius:8px; padding:20px; min-height:250px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;">
     </div>
-</div>
+    
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
             <script>

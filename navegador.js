@@ -441,36 +441,64 @@ function mostrarResultados(lista) {
 }
 
 // --- FUNCIONES DEL MAPA (FUERA de mostrarResultados) ---
+const CONFIG_ALMACENES = {
+    "A1": ["A1", "A2", "A3", "A4", "B1", "B2", "C1", "C2", "D1", "E1", "F1", "F2", "G1", "H1", "I1", "J1"],
+    "A2": ["K1", "L1", "M1", "N1", "O1", "P1", "Q1", "R1", "S1"]
+};
+
 function abrirMapa(ubicacionStr) {
     if (!ubicacionStr || ubicacionStr.includes('Sin ubicación')) return;
-    
+
     const modal = document.getElementById("modalMapa");
-    const display = document.getElementById("ubicacionTextoDisplay"); // Ahora coincide con el HTML
-    const txtSeccion = document.getElementById("txtSeccion");
-    const txtNivel = document.getElementById("txtNivel");
-    
-    if (!modal || !display) {
-        console.error("Error: No se encontró el modal o el display en el HTML");
-        return;
+    const container = document.getElementById("contenedorMapaDinamico");
+    const display = document.getElementById("ubicacionTextoDisplay");
+
+    // 1. Identificar Almacén y Anaquel (Ej: "A1 B2-N9")
+    const partes = ubicacionStr.trim().split(" ");
+    const almacenId = partes[0]; // "A1"
+    const anaquelTarget = partes[1] ? partes[1].split("-")[0] : null; // "B2"
+
+    display.innerText = ubicacionStr;
+    container.innerHTML = ""; // Limpiar mapa anterior
+
+    // 2. Obtener lista de anaqueles según el almacén
+    const anaqueles = CONFIG_ALMACENES[almacenId] || [];
+
+    if (anaqueles.length === 0) {
+        container.innerHTML = `<p class="text-muted">Diseño de almacén ${almacenId} pendiente de definir.</p>`;
+    } else {
+        // 3. Generar los anaqueles visualmente (Efecto 3D simple con CSS)
+        anaqueles.forEach(id => {
+            const esActivo = (id === anaquelTarget);
+            const anaquelDiv = document.createElement("div");
+            
+            anaquelDiv.innerHTML = `
+                <div style="
+                    width: 60px; 
+                    height: 80px; 
+                    background: ${esActivo ? '#007a33' : '#fff'}; 
+                    color: ${esActivo ? '#fff' : '#444'};
+                    border: 2px solid ${esActivo ? '#007a33' : '#dee2e6'};
+                    box-shadow: ${esActivo ? '0 5px 15px rgba(0,122,51,0.4)' : '2px 2px 5px rgba(0,0,0,0.05)'};
+                    display: flex; 
+                    flex-direction: column;
+                    align-items: center; 
+                    justify-content: center; 
+                    border-radius: 4px;
+                    transition: all 0.3s ease;
+                    transform: ${esActivo ? 'scale(1.1) translateY(-5px)' : 'none'};
+                    position: relative;
+                ">
+                    <span style="font-weight: 800; font-size: 0.9rem;">${id}</span>
+                    <div style="width: 80%; height: 4px; background: rgba(0,0,0,0.1); margin-top: 10px; border-radius: 10px;"></div>
+                    <div style="width: 80%; height: 4px; background: rgba(0,0,0,0.1); margin-top: 4px; border-radius: 10px;"></div>
+                    ${esActivo ? '<div style="position:absolute; top:-15px; font-size:1.2rem;">📍</div>' : ''}
+                </div>
+            `;
+            container.appendChild(anaquelDiv);
+        });
     }
 
-    // Resetear colores de los pasillos (usando tu clase 'pasillo')
-    document.querySelectorAll('.pasillo').forEach(p => p.setAttribute('fill', '#cbd5e1'));
-    
-    // Identificar pasillo (Primera letra, ej: "A")
-    const letra = ubicacionStr.trim().charAt(0).toUpperCase();
-    const pasilloActivo = document.getElementById(`pasillo-${letra}`); // Coincide con tu id="pasillo-A"
-    
-    if (pasilloActivo) {
-        pasilloActivo.setAttribute('fill', '#007a33'); 
-    }
-    
-    // Lógica para separar Sección y Nivel (Ej: "A1 D1-N9")
-    const partes = ubicacionStr.split(' ');
-    if (txtSeccion) txtSeccion.innerText = partes[1] || '-';
-    if (txtNivel) txtNivel.innerText = partes[2] || '-';
-    
-    display.innerText = ubicacionStr;
     modal.style.display = "flex";
 }
 
