@@ -438,37 +438,49 @@ function mostrarResultados(lista) {
     
     attachModalListeners(lista);
 
+}
 
-    // --- FUNCIONES DEL MAPA ---
+// --- FUNCIONES DEL MAPA (FUERA de mostrarResultados) ---
 function abrirMapa(ubicacionStr) {
     if (!ubicacionStr || ubicacionStr.includes('Sin ubicación')) return;
     
     const modal = document.getElementById("modalMapa");
-    const display = document.getElementById("ubicacionTextoDisplay");
+    const display = document.getElementById("ubicacionTextoDisplay"); // Ahora coincide con el HTML
+    const txtSeccion = document.getElementById("txtSeccion");
+    const txtNivel = document.getElementById("txtNivel");
     
-    // Resetear colores
-    document.querySelectorAll('.pasillo-grafico').forEach(p => p.setAttribute('fill', '#dee2e6'));
+    if (!modal || !display) {
+        console.error("Error: No se encontró el modal o el display en el HTML");
+        return;
+    }
+
+    // Resetear colores de los pasillos (usando tu clase 'pasillo')
+    document.querySelectorAll('.pasillo').forEach(p => p.setAttribute('fill', '#cbd5e1'));
     
-    // Identificar pasillo (Primera letra)
+    // Identificar pasillo (Primera letra, ej: "A")
     const letra = ubicacionStr.trim().charAt(0).toUpperCase();
-    const pasilloActivo = document.getElementById(`map-${letra}`);
+    const pasilloActivo = document.getElementById(`pasillo-${letra}`); // Coincide con tu id="pasillo-A"
     
     if (pasilloActivo) {
-        pasilloActivo.setAttribute('fill', '#007a33'); // Tu verde corporativo
+        pasilloActivo.setAttribute('fill', '#007a33'); 
     }
+    
+    // Lógica para separar Sección y Nivel (Ej: "A1 D1-N9")
+    const partes = ubicacionStr.split(' ');
+    if (txtSeccion) txtSeccion.innerText = partes[1] || '-';
+    if (txtNivel) txtNivel.innerText = partes[2] || '-';
     
     display.innerText = ubicacionStr;
     modal.style.display = "flex";
 }
 
 function cerrarMapa() {
-    document.getElementById("modalMapa").style.display = "none";
+    const modal = document.getElementById("modalMapa");
+    if (modal) modal.style.display = "none";
 }
 
-// --- LISTENER GLOBAL PARA CLICS (Delegación de eventos) ---
-// Agrega esto al final de tu archivo para que capture clics en elementos dinámicos
+// --- LISTENER DE CLICS (FUERA de mostrarResultados) ---
 document.addEventListener("click", (e) => {
-    // 1. Detectar clic en el texto de ubicación
     const btnUbicacion = e.target.closest(".btn-mapa");
     if (btnUbicacion) {
         const ubi = btnUbicacion.getAttribute("data-ubicacion");
@@ -476,13 +488,11 @@ document.addEventListener("click", (e) => {
         return;
     }
 
-    // 2. Cerrar modal si se hace clic fuera del contenido blanco
     const modal = document.getElementById("modalMapa");
     if (e.target === modal) {
         cerrarMapa();
     }
 });
-}
 
 function actualizarVista() {
   const cont = document.getElementById("resultados");
