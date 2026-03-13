@@ -10,75 +10,50 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  body{
-  background:#eef2f6;
+body{
+  background:#f4f6f9;
   font-family:'Inter',sans-serif;
-  margin:0;
 }
 
-.container-panel{
+.container-edit{
   max-width:1200px;
-  margin:20px auto;
+  margin:40px auto;
 }
 
-.panel-card{
-  background:#fff;
+.card-clean{
+  border:0;
   border-radius:14px;
-  box-shadow:0 8px 25px rgba(0,0,0,.06);
-  padding:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
 }
 
-.panel-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
-}
-
-.panel-id{
-  margin-left:10px;
-  color:#666;
-  font-size:.85rem;
-}
-
-.panel-grid{
-  display:grid;
-  grid-template-columns: 280px 1fr;
-  gap:12px;
-}
-
-.box{
-  background:#f8fafc;
-  border-radius:10px;
-  padding:12px;
-}
-
-.box.full{
-  margin-top:12px;
-}
-
-.box-title{
+.section-title{
   font-size:.75rem;
   font-weight:700;
-  color:#007a33;
-  margin-bottom:6px;
   text-transform:uppercase;
+  color:#007a33;
+  margin-bottom:10px;
 }
 
-.form-control,
-.form-select{
+.form-label{
+  font-size:.75rem;
+  font-weight:600;
+  margin-bottom:4px;
+}
+
+.form-control, .form-select{
   font-size:.85rem;
   border-radius:8px;
 }
 
 .image-preview{
-  height:160px;
-  background:#e5e7eb;
-  border-radius:8px;
+  height:240px;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid #e2e8f0;
+  background:#e2e8f0;
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
 }
 
 .image-preview img{
@@ -87,24 +62,57 @@
   object-fit:cover;
 }
 
+.compat-chip{
+  background:#e8f5e9;
+  color:#065f46;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+.compat-chip button{
+  border:0;
+  background:none;
+  cursor:pointer;
+  font-size:12px;
+}
+
 .btn-save{
   background:#007a33;
   border:0;
-  color:#fff;
-  padding:8px 18px;
+  font-size:.85rem;
+  padding:10px 22px;
   border-radius:8px;
-  font-weight:600;
 }
 
 .btn-save:hover{
   background:#006329;
 }
+.machine-item {
+  border:1px solid #e2e8f0;
+  border-radius:8px;
+  padding:8px 10px;
+  background:#f8fafc;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+}
+
+.machine-item:hover {
+  background:#e2f5ea;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- <div class="container container-edit">
+<div class="container container-edit">
 
 <div class="row g-4">
 
@@ -246,119 +254,6 @@
   </div>
 
 </div>
-</div> -->
-
-
-<div class="container-panel">
-
-  <div class="panel-card">
-
-    <!-- HEADER -->
-    <div class="panel-header">
-      <div>
-        <strong>Editar Refacción</strong>
-        <span class="panel-id">ID: <span id="ref-id-display">---</span></span>
-      </div>
-
-      <button type="submit" form="form" class="btn-save">
-        Guardar
-      </button>
-    </div>
-
-    <form id="form">
-
-      <div class="panel-grid">
-
-        <!-- IMAGEN -->
-        <div class="box image-box">
-          <div class="box-title">Imagen</div>
-
-          <div class="image-preview">
-            <img id="previewImagen" style="display:none;">
-          </div>
-
-          <input type="file" id="imagen" class="form-control mt-2">
-          <input type="text" id="imagenUrl" class="form-control mt-2" placeholder="URL externa">
-
-          <button type="button"
-                  id="btnEliminarImagen"
-                  class="btn btn-outline-danger btn-sm mt-2">
-            Eliminar
-          </button>
-        </div>
-
-        <!-- DATOS PRINCIPALES -->
-        <div class="box">
-          <div class="box-title">Datos</div>
-
-          <input id="nombreprod" class="form-control mb-2" placeholder="Nombre">
-
-          <div class="row g-2 mb-2">
-            <div class="col-6">
-              <input id="refinterna" class="form-control" placeholder="Referencia" disabled>
-            </div>
-            <div class="col-6">
-              <select id="categoriaprin" class="form-select"></select>
-            </div>
-          </div>
-
-          <div class="row g-2 mb-2">
-            <div class="col-6">
-              <input id="tipoprod" class="form-control" placeholder="Tipo">
-            </div>
-            <div class="col-6">
-              <input id="modelo" class="form-control" placeholder="Modelo">
-            </div>
-          </div>
-
-          <input id="palclave" class="form-control" placeholder="Palabras clave">
-        </div>
-
-        <!-- INVENTARIO -->
-        <div class="box">
-          <div class="box-title">Inventario</div>
-
-          <div class="row g-2">
-            <div class="col-6">
-              <input id="cantidad" type="number" class="form-control" placeholder="Cantidad">
-            </div>
-            <div class="col-6">
-              <input id="unidad" class="form-control" placeholder="Unidad">
-            </div>
-          </div>
-        </div>
-
-        <!-- UBICACION -->
-        <div class="box">
-          <div class="box-title">Ubicación / Observación</div>
-
-          <input id="ubicacion" class="form-control mb-2" placeholder="Ubicación">
-
-          <textarea id="observacion"
-                    class="form-control"
-                    rows="3"
-                    placeholder="Observación"></textarea>
-        </div>
-
-      </div>
-
-      <!-- COMPATIBLES -->
-      <div class="box full">
-        <div class="box-title">Máquinas compatibles</div>
-
-        <div id="lista-maquinas" class="d-flex flex-wrap gap-2 mb-2"></div>
-
-        <button type="button"
-                class="btn btn-outline-secondary btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#modalMaquinas">
-          Agregar máquina
-        </button>
-      </div>
-
-    </form>
-
-  </div>
 </div>
 
 <!-- MODAL MAQUINAS -->
