@@ -450,47 +450,67 @@ function abrirMapa(ubicacionStr) {
     if (!ubicacionStr || ubicacionStr.includes('Sin ubicación')) return;
 
     const modal = document.getElementById("modalMapa");
-    // Cambiamos el ID para que coincida con tu <span id="ubicacionTexto">
-    const display = document.getElementById("ubicacionTexto"); 
-    const container = document.getElementById("contenedorMapaDinamico");
+    if (!modal) return; // Si no hay modal, no hacemos nada
 
-    // VALIDACIÓN DE SEGURIDAD: Si no existe el elemento, detenemos el error
-    if (!display) {
-        console.error("ERROR: No encontré el ID 'ubicacionTexto' en el HTML. Revisa tu <span>");
-        return; 
+    // Intentamos buscar el span por varios IDs posibles para evitar el error de null
+    const display = document.getElementById("ubicacionTexto") || 
+                    document.getElementById("ubicacionTextoDisplay") || 
+                    document.querySelector("#mapaTitulo span");
+
+    const container = document.getElementById("contenedorMapaDinamico") || 
+                      document.getElementById("svgAlmacen")?.parentElement;
+
+    // Si encontramos el display, ponemos el texto
+    if (display) {
+        display.innerText = ubicacionStr;
     }
 
-    display.innerText = ubicacionStr;
-
-    // 1. Identificar Almacén y Anaquel (Ej: "A1 B2-N9")
+    // Lógica de Almacén y Anaquel
     const partes = ubicacionStr.trim().split(" ");
-    const almacenId = partes[0]; // "A1"
-    const anaquelTarget = partes[1] ? partes[1].split("-")[0] : null; // "B2"
+    const almacenId = partes[0]; // A1, A2...
+    const anaquelTarget = partes[1] ? partes[1].split("-")[0] : null;
 
     if (container) {
-        container.innerHTML = ""; // Limpiar
+        container.innerHTML = ""; // Limpiamos el SVG viejo o anaqueles previos
+        
+        // Estilo de rejilla para los anaqueles
+        container.style.display = "flex";
+        container.style.flexWrap = "wrap";
+        container.style.gap = "10px";
+        container.style.justifyContent = "center";
+
         const anaqueles = CONFIG_ALMACENES[almacenId] || [];
 
         if (anaqueles.length === 0) {
-            container.innerHTML = `<p style="color:#7e8990">Mapa del almacén ${almacenId} no definido.</p>`;
+            container.innerHTML = `<div style="color:#7e8990; padding:20px;">Diseño de almacén ${almacenId} pendiente.</div>`;
         } else {
             anaqueles.forEach(id => {
                 const esActivo = (id === anaquelTarget);
                 const anaquelDiv = document.createElement("div");
                 
-                // Representación 2D/3D visual
+                // Estilo "3D" minimalista para IEMCO
                 anaquelDiv.style.cssText = `
-                    width: 55px; height: 70px; 
-                    background: ${esActivo ? '#007a33' : '#fff'}; 
-                    color: ${esActivo ? '#fff' : '#444'};
+                    width: 60px; height: 80px; 
+                    background: ${esActivo ? '#007a33' : '#ffffff'}; 
+                    color: ${esActivo ? '#ffffff' : '#7e8990'};
                     border: 2px solid ${esActivo ? '#007a33' : '#dee2e6'};
-                    display: flex; align-items: center; justify-content: center;
-                    border-radius: 4px; font-weight: bold; font-size: 0.8rem;
-                    box-shadow: ${esActivo ? '0 4px 10px rgba(0,122,51,0.3)' : 'none'};
-                    transform: ${esActivo ? 'scale(1.1)' : 'none'};
+                    border-bottom-width: 5px; /* Efecto profundidad */
+                    display: flex; flex-direction: column; align-items: center; justify-content: center;
+                    border-radius: 6px; font-weight: 800; font-size: 0.85rem;
+                    box-shadow: ${esActivo ? '0 8px 15px rgba(0,122,51,0.4)' : '0 2px 4px rgba(0,0,0,0.05)'};
+                    transform: ${esActivo ? 'scale(1.1) translateY(-5px)' : 'none'};
+                    transition: all 0.3s ease;
                     position: relative;
                 `;
-                anaquelDiv.innerHTML = `${id} ${esActivo ? '<span style="position:absolute; top:-10px">📍</span>' : ''}`;
+
+                // Añadimos "estantes" visuales dentro del anaquel
+                anaquelDiv.innerHTML = `
+                    <div style="width:70%; height:2px; background:rgba(0,0,0,0.1); margin-bottom:5px;"></div>
+                    ${id}
+                    <div style="width:70%; height:2px; background:rgba(0,0,0,0.1); margin-top:5px;"></div>
+                    ${esActivo ? '<span style="position:absolute; top:-20px; font-size:1.5rem;">📍</span>' : ''}
+                `;
+                
                 container.appendChild(anaquelDiv);
             });
         }
