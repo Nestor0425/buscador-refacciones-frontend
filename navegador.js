@@ -442,6 +442,19 @@ function mostrarResultados(lista) {
 
 // --- FUNCIONES DEL MAPA (FUERA de mostrarResultados) ---
 
+// Delegación de eventos para capturar clics en elementos creados dinámicamente
+document.addEventListener("click", (e) => {
+    // Buscamos si el clic fue en un elemento con la clase .btn-mapa
+    const btnUbicacion = e.target.closest(".btn-mapa");
+    
+    if (btnUbicacion) {
+        e.preventDefault();
+        const ubi = btnUbicacion.getAttribute("data-ubicacion");
+        console.log("Abriendo mapa para:", ubi); // Para depuración
+        abrirMapa(ubi);
+    }
+});
+
 const CONFIG_ALMACENES = {
     "A1": ["A1", "A2", "A3", "A4", "B1", "B2", "C1", "C2", "D1", "E1", "F1", "F2", "G1", "H1", "I1", "J1"],
     "A2": ["K1", "L1", "M1", "N1", "O1", "P1", "Q1", "R1", "S1"]
@@ -450,71 +463,51 @@ const CONFIG_ALMACENES = {
 function abrirMapa(ubicacionStr) {
     if (!ubicacionStr || ubicacionStr.includes('Sin ubicación')) return;
 
-    // 1. Obtener elementos (con IDs exactos del HTML de arriba)
     const modal = document.getElementById("modalMapa");
     const display = document.getElementById("ubicacionTextoDisplay");
     const container = document.getElementById("contenedorMapaDinamico");
 
-    if (!modal || !container) {
-        console.error("Faltan elementos en el HTML (modalMapa o contenedorMapaDinamico)");
-        return;
-    }
+    if (!modal || !container) return;
 
-    // 2. Mostrar la ubicación en el título
-    if (display) display.innerText = ubicacionStr;
+    // Actualizar título
+    display.innerText = ubicacionStr;
 
-    // 3. Procesar texto (Ej: "A1 B2-N3")
+    // Limpiar contenedor
+    container.innerHTML = "";
+
+    // Extraer Almacén y Rack (ej: "A1 B2-N3")
     const partes = ubicacionStr.trim().split(" ");
-    const almacenId = partes[0]; // A1
-    const anaquelTarget = partes[1] ? partes[1].split("-")[0] : null; // B2
+    const almacenId = partes[0]; 
+    const anaquelTarget = partes[1] ? partes[1].split("-")[0] : null;
 
-    // 4. Dibujar Almacén
-    container.innerHTML = ""; 
-    const anaqueles = CONFIG_ALMACENES[almacenId] || [];
+    const racks = CONFIG_ALMACENES[almacenId] || [];
 
-    if (anaqueles.length === 0) {
-        container.innerHTML = `<div style="color:#999; padding:40px;">Esquema de almacén ${almacenId} no disponible.</div>`;
+    if (racks.length === 0) {
+        container.innerHTML = `<p style="color:#999">Esquema de ${almacenId} no definido.</p>`;
     } else {
-        anaqueles.forEach(id => {
+        racks.forEach(id => {
             const esActivo = (id === anaquelTarget);
-            const rack = document.createElement("div");
-            
-            // Diseño 2D/3D del Rack
-            rack.style.cssText = `
-                width: 65px; height: 85px; 
+            const div = document.createElement("div");
+            div.style.cssText = `
+                width: 60px; height: 80px; 
                 background: ${esActivo ? '#007a33' : '#fff'}; 
                 color: ${esActivo ? '#fff' : '#7e8990'};
                 border: 2px solid ${esActivo ? '#007a33' : '#dee2e6'};
-                border-bottom: 6px solid ${esActivo ? '#004d21' : '#cbd5e1'}; 
-                display: flex; flex-direction: column; align-items: center; justify-content: center;
-                border-radius: 6px; font-weight: bold; font-size: 0.9rem;
-                box-shadow: ${esActivo ? '0 10px 20px rgba(0,122,51,0.3)' : '0 3px 6px rgba(0,0,0,0.05)'};
-                transform: ${esActivo ? 'scale(1.15) translateY(-5px)' : 'none'};
-                transition: 0.3s; position: relative;
+                border-bottom: 5px solid ${esActivo ? '#004d21' : '#cbd5e1'};
+                display:flex; flex-direction:column; align-items:center; justify-content:center;
+                border-radius:6px; font-weight:bold; transition: 0.3s;
+                transform: ${esActivo ? 'scale(1.1) translateY(-5px)' : 'none'};
             `;
-
-            rack.innerHTML = `
-                <div style="width:75%; height:2px; background:rgba(0,0,0,0.1); margin:4px 0;"></div>
-                ${id}
-                <div style="width:75%; height:2px; background:rgba(0,0,0,0.1); margin:4px 0;"></div>
-                ${esActivo ? '<span style="position:absolute; top:-25px; font-size:1.5rem;">📍</span>' : ''}
-            `;
-            container.appendChild(rack);
+            div.innerHTML = `${id} ${esActivo ? '<br>📍' : ''}`;
+            container.appendChild(div);
         });
     }
 
-    // 5. Mostrar el modal
     modal.style.display = "flex";
 }
 
 function cerrarMapa() {
-    const modal = document.getElementById("modalMapa");
-    if (modal) modal.style.display = "none";
-}
-
-function cerrarMapa() {
-    const modal = document.getElementById("modalMapa");
-    if (modal) modal.style.display = "none";
+    document.getElementById("modalMapa").style.display = "none";
 }
 
 // --- LISTENER DE CLICS (FUERA de mostrarResultados) ---

@@ -680,25 +680,18 @@
 
 
 <div id="modalMapa" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; padding:20px;">
-    <div style="background:white; border-radius:12px; max-width:600px; width:100%; overflow:hidden; box-shadow:0 20px-50px rgba(0,0,0,0.5); font-family: sans-serif;">
-        
+    <div style="background:white; border-radius:12px; max-width:600px; width:100%; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
         <div style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background:#fcfcfc;">
-            <h4 style="margin:0; color:#7e8990; font-size: 1.1rem;">
+            <h4 style="margin:0; color:#7e8990; font-family:sans-serif;">
                 Ubicación: <span id="ubicacionTextoDisplay" style="color:#007a33; font-weight:bold;">---</span>
             </h4>
             <button onclick="cerrarMapa()" style="border:none; background:none; font-size:28px; cursor:pointer; color:#999;">&times;</button>
         </div>
-
         <div style="padding:25px; text-align:center; background:#f8f9fa;">
             <div id="contenedorMapaDinamico" style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; min-height:200px;">
                 </div>
         </div>
-
-        <div style="padding:10px;">
-            <button onclick="cerrarMapa()" style="width:100%; padding:14px; border:none; background:#007a33; color:white; font-weight:bold; border-radius:6px; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">
-                Entendido
-            </button>
-        </div>
+        <button onclick="cerrarMapa()" style="width:100%; padding:15px; border:none; background:#007a33; color:white; font-weight:bold; cursor:pointer;">CERRAR</button>
     </div>
 </div>
 
