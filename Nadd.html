@@ -883,48 +883,6 @@
     });
 
 
-    function abrirMapa(ubicacionStr) {
-    if(!ubicacionStr || ubicacionStr === 'Sin ubicación') return;
-    
-    const modal = document.getElementById("modalMapa");
-    const txtUbicacion = document.getElementById("ubicacionTexto");
-    const txtSeccion = document.getElementById("txtSeccion");
-    const txtNivel = document.getElementById("txtNivel");
-    
-    // 1. Limpiar colores previos
-    document.querySelectorAll('.pasillo').forEach(p => p.setAttribute('fill', '#cbd5e1'));
-    
-    // 2. Analizar ubicación (ej: "A1 D1-N9")
-    // Tomamos la primera letra para el pasillo
-    const letraPasillo = ubicacionStr.trim().charAt(0).toUpperCase(); // "A"
-    const pasilloTarget = document.getElementById(`pasillo-${letraPasillo}`);
-    
-    if(pasilloTarget) {
-        pasilloTarget.setAttribute('fill', '#007a33'); // Iluminamos con tu color verde
-    }
-
-    // 3. Extraer detalles para los cuadros inferiores (si existen en el string)
-    // Ejemplo de split simple:
-    const partes = ubicacionStr.split(' ');
-    txtSeccion.innerText = partes[1] || '-';
-    txtNivel.innerText = partes[2] || '-';
-    
-    txtUbicacion.innerText = ubicacionStr;
-    modal.style.display = "flex";
-}
-
-function cerrarMapa() {
-    document.getElementById("modalMapa").style.display = "none";
-}
-
-// Delegación de eventos (Agrégalo después de inicializar tu app)
-document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-mapa');
-    if(btn) {
-        const ubi = btn.getAttribute('data-ubicacion');
-        abrirMapa(ubi);
-    }
-});
 
             </script>
             

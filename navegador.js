@@ -394,7 +394,6 @@ function mostrarResultados(lista) {
       <h3 class="ref-title">${r.nombreprod}</h3>
       <div class="ref-modelo">Modelo: <strong>${r.modelo || '-'}</strong></div>
       <div class="ref-cantidad">Cantidad: <strong>${r.cantidad} ${r.unidad || ''}</strong></div>
-      // <div class="ref-ubicacion">📍 ${r.ubicacion || 'Sin ubicación'}</div>
       <div class="ref-ubicacion btn-mapa" data-ubicacion="${r.ubicacion || ''}" style="cursor:pointer hover:opacity-80">
   📍 ${r.ubicacion || 'Sin ubicación'}
 </div>
@@ -438,6 +437,51 @@ function mostrarResultados(lista) {
     cont.appendChild(fragment);
     
     attachModalListeners(lista);
+
+
+    // --- FUNCIONES DEL MAPA ---
+function abrirMapa(ubicacionStr) {
+    if (!ubicacionStr || ubicacionStr.includes('Sin ubicación')) return;
+    
+    const modal = document.getElementById("modalMapa");
+    const display = document.getElementById("ubicacionTextoDisplay");
+    
+    // Resetear colores
+    document.querySelectorAll('.pasillo-grafico').forEach(p => p.setAttribute('fill', '#dee2e6'));
+    
+    // Identificar pasillo (Primera letra)
+    const letra = ubicacionStr.trim().charAt(0).toUpperCase();
+    const pasilloActivo = document.getElementById(`map-${letra}`);
+    
+    if (pasilloActivo) {
+        pasilloActivo.setAttribute('fill', '#007a33'); // Tu verde corporativo
+    }
+    
+    display.innerText = ubicacionStr;
+    modal.style.display = "flex";
+}
+
+function cerrarMapa() {
+    document.getElementById("modalMapa").style.display = "none";
+}
+
+// --- LISTENER GLOBAL PARA CLICS (Delegación de eventos) ---
+// Agrega esto al final de tu archivo para que capture clics en elementos dinámicos
+document.addEventListener("click", (e) => {
+    // 1. Detectar clic en el texto de ubicación
+    const btnUbicacion = e.target.closest(".btn-mapa");
+    if (btnUbicacion) {
+        const ubi = btnUbicacion.getAttribute("data-ubicacion");
+        abrirMapa(ubi);
+        return;
+    }
+
+    // 2. Cerrar modal si se hace clic fuera del contenido blanco
+    const modal = document.getElementById("modalMapa");
+    if (e.target === modal) {
+        cerrarMapa();
+    }
+});
 }
 
 function actualizarVista() {
