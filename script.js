@@ -1,7 +1,10 @@
 console.log("Script.js cargado correctamente");
-const API_URL = "https://buscador-refaccionesbackend.onrender.com";
 
-fetch("https://buscador-refaccionesbackend.onrender.com/health")
+// ✅ Usar variable de Vercel si existe
+const API_URL = window.API_URL || "https://buscador-refacciones-backend.onrender.com";
+
+// 🔹 Health check
+fetch(`${API_URL}/health`)
   .then(res => res.json())
   .then(data => {
     console.log("RESPUESTA BACKEND:", data);
@@ -10,9 +13,9 @@ fetch("https://buscador-refaccionesbackend.onrender.com/health")
     console.error("ERROR:", err);
   });
 
-  const statusDiv = document.getElementById("backend-status");
+const statusDiv = document.getElementById("backend-status");
 
-fetch("https://buscador-refaccionesbackend.onrender.com/health")
+fetch(`${API_URL}/health`)
   .then(res => res.json())
   .then(data => {
     if (data.ok) {
@@ -30,11 +33,12 @@ fetch("https://buscador-refaccionesbackend.onrender.com/health")
     console.error(err);
   });
 
-  async function mostrarUltimaActualizacion() {
+// 🔹 Última actualización
+async function mostrarUltimaActualizacion() {
   const elemento = document.getElementById("ultimaActualizacion");
 
   try {
-    const res = await fetch("https://buscador-refaccionesbackend.onrender.com/refacciones");
+    const res = await fetch(`${API_URL}/refacciones`);
     const data = await res.json();
 
     if (data.length === 0) {
@@ -42,13 +46,11 @@ fetch("https://buscador-refaccionesbackend.onrender.com/health")
       return;
     }
 
-    // Suponiendo que cada refacción tiene 'updated_at' o 'created_at'
     const ultima = data.reduce((max, r) => {
       const fecha = new Date(r.updated_at || r.created_at);
       return fecha > max ? fecha : max;
     }, new Date(0));
 
-    // Formateo legible, ejemplo: Hoy, 10:45 AM
     const ahora = new Date();
     let texto = "";
 
@@ -66,20 +68,17 @@ fetch("https://buscador-refaccionesbackend.onrender.com/health")
   }
 }
 
-// Llamar la función al cargar la página
 mostrarUltimaActualizacion();
 
+// 🔹 Total de refacciones
 async function mostrarTotalRefacciones() {
   const elemento = document.getElementById("totalRefacciones");
 
   try {
-    const res = await fetch("https://buscador-refaccionesbackend.onrender.com/refacciones");
+    const res = await fetch(`${API_URL}/refacciones`);
     const data = await res.json();
 
-    // Total de registros
     const total = data.length;
-
-    // Mostrar en la tarjeta con formato de miles
     elemento.textContent = `${total.toLocaleString()} Refacciones`;
 
   } catch (err) {
@@ -88,16 +87,15 @@ async function mostrarTotalRefacciones() {
   }
 }
 
-// Llamar la función al cargar la página
 mostrarTotalRefacciones();
 
-
+// 🔹 Últimos productos
 async function mostrarUltimosProductos() {
   const nombreElem = document.getElementById("ultimoProducto");
   const etiquetasElem = document.getElementById("ultimasEtiquetas");
 
   try {
-    const res = await fetch("https://buscador-refaccionesbackend.onrender.com/refacciones");
+    const res = await fetch(`${API_URL}/refacciones`);
     const data = await res.json();
 
     if (!data.length) {
@@ -105,19 +103,14 @@ async function mostrarUltimosProductos() {
       return;
     }
 
-    // Ordenar por id descendente (últimos agregados)
-    const ultimos = data.sort((a, b) => b.id - a.id).slice(0, 1); // mostrar solo el último
+    const ultimos = data.sort((a, b) => b.id - a.id).slice(0, 1);
     const ultimo = ultimos[0];
 
-    // Nombre del último producto
     nombreElem.textContent = ultimo.nombreprod || "Sin nombre";
-
-    // Limpiar badges
     etiquetasElem.innerHTML = "";
 
-    // Si tiene etiquetas, generar badges
     if (ultimo.palclave) {
-      const etiquetas = ultimo.palclave.split(","); // separar por coma si hay varias
+      const etiquetas = ultimo.palclave.split(",");
       etiquetas.forEach(et => {
         const span = document.createElement("span");
         span.className = "badge bg-light text-dark border rounded-pill px-3";
@@ -132,11 +125,10 @@ async function mostrarUltimosProductos() {
   }
 }
 
-// Llamar al cargar la página
 mostrarUltimosProductos();
 
+// 🔹 Cargar logs
 async function cargarLogs() {
-
   const res = await fetch(`${API_URL}/logs-db`);
   const logs = await res.json();
 
@@ -144,9 +136,7 @@ async function cargarLogs() {
   tabla.innerHTML = "";
 
   logs.forEach(log => {
-
     const fila = document.createElement("tr");
-
     fila.innerHTML = `
       <td>${new Date(log.created_at).toLocaleString()}</td>
       <td>${log.level}</td>
@@ -154,11 +144,8 @@ async function cargarLogs() {
       <td>${log.route || ""}</td>
       <td>${log.data ? JSON.stringify(log.data) : ""}</td>
     `;
-
     tabla.appendChild(fila);
-
   });
-
 }
 
 cargarLogs();
