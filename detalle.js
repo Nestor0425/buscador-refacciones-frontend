@@ -1,8 +1,15 @@
-const API = "https://buscador-refaccionesbackend.onrender.com";
+/**
+ * CONFIGURACIÓN DE API (ENFOQUE SENIOR)
+ * Blindaje contra fallos de entorno y fallback automático.
+ */
+const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
+            || "https://buscador-refacciones-backend.onrender.com/api";
+
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 const form = document.getElementById("form");
 
+// Elementos de UI
 const inputImagen = document.getElementById("imagen");
 const inputImagenUrl = document.getElementById("imagenUrl");
 const preview = document.getElementById("previewImagen");
@@ -11,349 +18,257 @@ const btnEliminarImagen = document.getElementById("btnEliminarImagen");
 
 let imagenEliminada = false;
 let valoresActuales = {};
+let maquinasDisponibles = [];
+let maquinasSeleccionadas = [];
 
+/* ==========================================
+   🚀 EJECUCIÓN INICIAL (OPTIMIZADA)
+========================================== */
+(async () => {
+    try {
+        // Cargamos el detalle primero para tener los valores de referencia
+        await cargarDetalle();
+
+        // Ejecutamos las peticiones de opciones en paralelo para ganar velocidad
+        await Promise.all([
+            cargarOpciones("/opciones/categorias", "categoriaprin"),
+            cargarOpciones("/opciones/maquinamod", "maquinamod"),
+            cargarOpciones("/opciones/maquinaesp", "maquinaesp"),
+            cargarOpciones("/opciones/nummaquina", "nummaquina"),
+            inicializarMaquinas()
+        ]);
+        
+        console.log("✅ Sistema de edición inicializado correctamente");
+    } catch (error) {
+        console.error("❌ Error en la carga inicial:", error);
+    }
+})();
 
 /* =========================
    CARGAR DETALLE REFACCIÓN
 ========================= */
 async function cargarDetalle() {
-  const res = await fetch(`${API}/refacciones/${id}`);
-  const r = await res.json();
+    if (!id) return;
+    const res = await fetch(`${API}/refacciones/${id}`);
+    const r = await res.json();
+    valoresActuales = r;
 
-  valoresActuales = r;
+    Object.keys(r).forEach(key => {
+        if (key === "imagen") return; // Protección: nunca tocar el input file
 
-  Object.keys(r).forEach(key => {
-    // ❌ NUNCA tocar input file
-    if (key === "imagen") return;
+        const el = document.getElementById(key);
+        if (el && el.tagName !== "SELECT") {
+            el.value = r[key] ?? "";
+        }
+    });
 
-    const el = document.getElementById(key);
-    if (el && el.tagName !== "SELECT") {
-      el.value = r[key] ?? "";
-    }
-  });
-
-  // ✅ mostrar imagen si existe
-  if (r.imagen) {
-    // const img = document.getElementById("preview-imagen");
     if (r.imagen) {
-  preview.src = r.imagen;
-  preview.style.display = "block";
-  btnQuitar.style.display = "block";
-}
-  }
+        preview.src = r.imagen;
+        preview.style.display = "block";
+        btnQuitar.style.display = "block";
+    }
 }
 
-/* =========================
-   CARGAR OPCIONES SELECT
-========================= */
 async function cargarOpciones(endpoint, selectId) {
-  const res = await fetch(`${API}${endpoint}`);
-  const data = await res.json();
+    const res = await fetch(`${API}${endpoint}`);
+    const data = await res.json();
+    const select = document.getElementById(selectId);
+    if (!select) return;
 
-  const select = document.getElementById(selectId);
-  select.innerHTML = `<option value="">-- Selecciona --</option>`;
+    select.innerHTML = `<option value="">-- Selecciona --</option>`;
+    data.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item.valor;
+        opt.textContent = item.valor;
+        select.appendChild(opt);
+    });
 
-  data.forEach(item => {
-    const opt = document.createElement("option");
-    opt.value = item.valor;
-    opt.textContent = item.valor;
-    select.appendChild(opt);
-  });
-
-  if (valoresActuales[selectId]) {
-    select.value = valoresActuales[selectId];
-  }
+    if (valoresActuales[selectId]) {
+        select.value = valoresActuales[selectId];
+    }
 }
-
-
 
 /* =========================
-   GUARDAR CAMBIOS
+   GUARDAR CAMBIOS (UNIFICADO)
 ========================= */
-document.getElementById("form").addEventListener("submit", async e => {
-  e.preventDefault();
+form.addEventListener("submit", async e => {
+    e.preventDefault();
 
-  const fd = new FormData();
+    const fd = new FormData();
 
-  document
-    .querySelectorAll("input:not([type=checkbox]):not([type=file]), textarea, select")
-    .forEach(el => {
-  if (el.id === "buscarMaquina") return; // 🔥 excluir
-  fd.append(el.id, el.value);
-});
+    // 1. Recolectar inputs estándar
+    document.querySelectorAll("input:not([type=checkbox]):not([type=file]), textarea, select")
+        .forEach(el => {
+            if (el.id === "buscarMaquina") return;
+            fd.append(el.id, el.value);
+        });
 
+    // 2. Manejo de Imágenes (Archivo o URL)
+    if (inputImagen && inputImagen.files.length > 0) {
+        fd.append("imagen", inputImagen.files[0]);
+    }
 
-  const fileInput = document.getElementById("imagen");
-  if (fileInput && fileInput.files.length > 0) {
-    fd.append("imagen", fileInput.files[0]);
-  }
+    if (inputImagenUrl && inputImagenUrl.value.trim() !== "") {
+        fd.append("imagenUrl", inputImagenUrl.value.trim());
+    }
 
-  const imagenUrlInput = document.getElementById("imagenUrl");
+    if (imagenEliminada) {
+        fd.append("eliminarImagen", "true");
+    }
 
-if (imagenUrlInput && imagenUrlInput.value.trim() !== "") {
-  fd.append("imagenUrl", imagenUrlInput.value.trim());
-}
+    // 3. Compatibilidad
+    fd.append("compatibilidad", JSON.stringify(maquinasSeleccionadas));
 
-  
-fd.append(
-  "compatibilidad",
-  JSON.stringify(maquinasSeleccionadas)
-);
-console.log("Compatibilidad a guardar:", maquinasSeleccionadas);
+    try {
+        const res = await fetch(`${API}/refacciones/${id}`, {
+            method: "PUT",
+            body: fd
+        });
 
-  const res = await fetch(`${API}/refacciones/${id}`, {
-    method: "PUT",
-    body: fd
-  });
+        if (!res.ok) throw new Error("Error en la respuesta del servidor");
 
-  if (!res.ok) {
-    alert("❌ Error al guardar");
-    return;
-  }
-
-  alert("✅ Refacción actualizada");
-  window.location.href = "refaUbi/refacconUbi.html";
-
-  if (imagenEliminada) {
-    formData.append("eliminarImagen", "true");
-  }
-
-  await fetch(`${API}/refacciones/${id}`, {
-    method: "PUT",
-    body: formData
-  });
-
-  alert("Guardado correctamente");
+        alert("✅ Refacción actualizada correctamente");
+        window.location.href = "refaUbi/refacconUbi.html";
+    } catch (error) {
+        console.error("❌ Error al guardar:", error);
+        alert("❌ Error al guardar los cambios.");
+    }
 });
 
 /* =========================
-   EJECUCIÓN ORDENADA
-========================= */
-(async () => {
-  await cargarDetalle();
-
-  await cargarOpciones("/opciones/categorias", "categoriaprin");
-  await cargarOpciones("/opciones/maquinamod", "maquinamod");
-  await cargarOpciones("/opciones/maquinaesp", "maquinaesp");
-await cargarOpciones("/opciones/nummaquina", "nummaquina");
-
-  // await cargarMaquinasCompatibles();
-  await inicializarMaquinas();
-
-})();
-
-function renderCompatibles(maquinas) {
-  const cont = document.getElementById("lista-maquinas");
-  cont.innerHTML = "";
-
-  maquinas.forEach(m => {
-    cont.innerHTML += `
-      <div class="compat-chip">
-        ${m.nombre}
-        <button onclick="quitarMaquina(${m.id})">
-          <i class="bi bi-x"></i>
-        </button>
-      </div>
-    `;
-  });
-}
-
-
-let maquinasDisponibles = [];
-let maquinasSeleccionadas = [];
-
-/* =========================
-   CARGAR MAQUINAS EN MODAL
+   GESTIÓN DE MÁQUINAS (MODAL)
 ========================= */
 async function inicializarMaquinas() {
-  // Traer todas las máquinas
-  maquinasDisponibles = await fetch(`${API}/maquinas`)
-    .then(r => r.json());
+    // Cargas paralelas
+    const [mRes, cRes] = await Promise.all([
+        fetch(`${API}/maquinas`).then(r => r.json()),
+        fetch(`${API}/refacciones/${id}/compatibles`).then(r => r.json())
+    ]);
 
-  // Traer compatibles actuales
-  const resp = await fetch(`${API}/refacciones/${id}/compatibles`)
-    .then(r => r.json());
+    maquinasDisponibles = mRes;
+    maquinasSeleccionadas = (cRes.maquinas || []).map(mid => Number(mid));
 
-  maquinasSeleccionadas = (resp.maquinas || []).map(id => Number(id));
-
-
-  renderModal(maquinasDisponibles);
-  renderChips();
+    renderModal(maquinasDisponibles);
+    renderChips();
 }
-
 
 function renderModal(lista) {
-  console.log(lista);
+    const listaModal = document.getElementById("lista-maquinas-modal");
+    if (!listaModal) return;
+    listaModal.innerHTML = "";
 
-  const listaModal = document.getElementById("lista-maquinas-modal");
-  if (!listaModal) return;
+    const grupos = {};
+    lista.forEach(m => {
+        const cat = m.categoriaprin || "OTROS";
+        if (!grupos[cat]) grupos[cat] = [];
+        grupos[cat].push(m);
+    });
 
-  listaModal.innerHTML = "";
+    const accordion = document.createElement("div");
+    accordion.className = "accordion";
+    accordion.id = "accordionMaquinas";
 
-  const grupos = {};
+    Object.keys(grupos).forEach((categoria, index) => {
+        const collapseId = `collapse-${index}`;
+        const headingId = `heading-${index}`;
+        const maquinasHTML = grupos[categoria].map(m => {
+            const checked = maquinasSeleccionadas.includes(Number(m.id)) ? "checked" : "";
+            return `
+                <div class="col-md-6 mb-2">
+                    <div class="machine-item">
+                        <input type="checkbox" value="${m.id}" ${checked}>
+                        ${m.maquinamod || ""} ${m.maquinaesp || ""}
+                    </div>
+                </div>`;
+        }).join("");
 
-  // Agrupar por categoría
-  lista.forEach(m => {
-    const categoria = m.categoriaprin || "OTROS";
-
-    if (!grupos[categoria]) {
-      grupos[categoria] = [];
-    }
-
-    grupos[categoria].push(m);
-  });
-
-  // Crear accordion principal
-  const accordion = document.createElement("div");
-  accordion.className = "accordion";
-  accordion.id = "accordionMaquinas";
-
-  let index = 0;
-
-  Object.keys(grupos).forEach(categoria => {
-    const collapseId = `collapse-${index}`;
-    const headingId = `heading-${index}`;
-
-    const maquinasHTML = grupos[categoria].map(m => {
-      const checked = maquinasSeleccionadas.includes(Number(m.id)) ? "checked" : "";
-
-      return `
-        <div class="col-md-6 mb-2">
-          <div class="machine-item">
-            <input type="checkbox"
-                   value="${m.id}"
-                   data-categoria="${m.categoriaprin}"
-                   ${checked}>
-            ${m.maquinamod || ""} ${m.maquinaesp || ""}
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    const item = document.createElement("div");
-    item.className = "accordion-item";
-
-    item.innerHTML = `
-      <h2 class="accordion-header" id="${headingId}">
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#${collapseId}">
-          ${categoria.toUpperCase()} (${grupos[categoria].length})
-        </button>
-      </h2>
-      <div id="${collapseId}"
-           class="accordion-collapse collapse"
-           data-bs-parent="#accordionMaquinas">
-        <div class="accordion-body">
-          <div class="row">
-            ${maquinasHTML}
-          </div>
-        </div>
-      </div>
-    `;
-
-    accordion.appendChild(item);
-    index++;
-  });
-
-  listaModal.appendChild(accordion);
+        const item = document.createElement("div");
+        item.className = "accordion-item";
+        item.innerHTML = `
+            <h2 class="accordion-header" id="${headingId}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
+                    ${categoria.toUpperCase()} (${grupos[categoria].length})
+                </button>
+            </h2>
+            <div id="${collapseId}" class="accordion-collapse collapse" data-bs-parent="#accordionMaquinas">
+                <div class="accordion-body"><div class="row">${maquinasHTML}</div></div>
+            </div>`;
+        accordion.appendChild(item);
+    });
+    listaModal.appendChild(accordion);
 }
-/* =========================
-   BUSCADOR MODAL
-========================= */
+
+// Evento de búsqueda en modal
 document.addEventListener("input", e => {
-  if (e.target.id === "buscarMaquina") {
-    const texto = e.target.value.toLowerCase();
-
-    const filtradas = maquinasDisponibles.filter(m =>
-      `${m.maquinamod} ${m.maquinaesp}`
-        .toLowerCase()
-        .includes(texto)
-    );
-
-    renderModal(filtradas);
-  }
+    if (e.target.id === "buscarMaquina") {
+        const texto = e.target.value.toLowerCase();
+        const filtradas = maquinasDisponibles.filter(m => 
+            `${m.maquinamod} ${m.maquinaesp}`.toLowerCase().includes(texto)
+        );
+        renderModal(filtradas);
+    }
 });
 
-/* =========================
-   CONFIRMAR SELECCIÓN
-========================= */
+// Confirmar selección del modal
 document.addEventListener("click", e => {
-  if (e.target.id === "confirmarMaquinas") {
-    const checks = document.querySelectorAll(
-      "#lista-maquinas-modal input:checked"
-    );
-
-    maquinasSeleccionadas = Array.from(checks)
-      .map(c => Number(c.value));
-
-    renderChips();
-
-    const modal = bootstrap.Modal.getInstance(
-      document.getElementById("modalMaquinas")
-    );
-    modal.hide();
-  }
+    if (e.target.id === "confirmarMaquinas") {
+        const checks = document.querySelectorAll("#lista-maquinas-modal input:checked");
+        maquinasSeleccionadas = Array.from(checks).map(c => Number(c.value));
+        renderChips();
+        bootstrap.Modal.getInstance(document.getElementById("modalMaquinas")).hide();
+    }
 });
 
-/* =========================
-   RENDER CHIPS
-========================= */
 function renderChips() {
-  const cont = document.getElementById("lista-maquinas");
-  if (!cont) return;
+    const cont = document.getElementById("lista-maquinas");
+    if (!cont) return;
+    cont.innerHTML = "";
 
-  cont.innerHTML = "";
-
-  maquinasSeleccionadas.forEach(id => {
-    const maquina = maquinasDisponibles.find(m => m.id === id);
-    if (!maquina) return;
-
-    cont.innerHTML += `
-      <span class="compat-chip">
-        ${maquina.maquinamod} ${maquina.maquinaesp}
-        <button onclick="quitarMaquina(${id})">
-          <i class="bi bi-x"></i>
-        </button>
-      </span>
-    `;
-  });
+    maquinasSeleccionadas.forEach(mid => {
+        const maquina = maquinasDisponibles.find(m => m.id === mid);
+        if (!maquina) return;
+        cont.innerHTML += `
+            <span class="compat-chip">
+                ${maquina.maquinamod} ${maquina.maquinaesp}
+                <button type="button" onclick="quitarMaquina(${mid})">
+                    <i class="bi bi-x"></i>
+                </button>
+            </span>`;
+    });
 }
 
-function quitarMaquina(id) {
-  maquinasSeleccionadas =
-    maquinasSeleccionadas.filter(m => m !== id);
+// EXPOSICIÓN GLOBAL para los onclick del HTML
+window.quitarMaquina = function(mid) {
+    maquinasSeleccionadas = maquinasSeleccionadas.filter(m => m !== mid);
+    renderChips();
+};
 
-  renderChips();
-}
-
+/* =========================
+   GESTIÓN DE IMÁGENES
+========================= */
 btnEliminarImagen.addEventListener("click", async () => {
-  if (!confirm("¿Eliminar imagen guardada?")) return;
-
-  await fetch(`${API}/refacciones/${id}/imagen`, {
-    method: "DELETE"
-  });
-
-  preview.src = "";
-  preview.style.display = "none";
+    if (!confirm("¿Eliminar imagen definitivamente del servidor?")) return;
+    try {
+        await fetch(`${API}/refacciones/${id}/imagen`, { method: "DELETE" });
+        preview.src = "";
+        preview.style.display = "none";
+        imagenEliminada = true;
+    } catch (err) { console.error(err); }
 });
 
 inputImagen.addEventListener("change", () => {
-  const file = inputImagen.files[0];
-
-  if (file) {
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
-    btnQuitar.style.display = "block";
-    imagenEliminada = false;
-  }
+    const file = inputImagen.files[0];
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+        btnQuitar.style.display = "block";
+        imagenEliminada = false;
+    }
 });
 
 btnQuitar.addEventListener("click", () => {
-  preview.src = "";
-  preview.style.display = "none";
-  btnQuitar.style.display = "none";
-
-  inputImagen.value = "";
+    preview.src = "";
+    preview.style.display = "none";
+    btnQuitar.style.display = "none";
+    inputImagen.value = "";
 });
