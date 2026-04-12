@@ -1,5 +1,5 @@
 // LISTO
-const API = "https://buscador-refacciones-backend.onrender.com/api";
+const API = import.meta.env.VITE_API_URL || "https://buscador-refacciones-backend.onrender.com/api";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
