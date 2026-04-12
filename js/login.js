@@ -1,5 +1,5 @@
 // LISTO
-const API = "https://buscador-refacciones-backend.onrender.com";
+const API = "https://buscador-refacciones-backend.onrender.com/api";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
