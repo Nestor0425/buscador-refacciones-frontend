@@ -1,15 +1,21 @@
-console.log("Refacciones.js cargado correctamente");
-const API = "https://buscador-refacciones-backend.onrender.com/api";
+// 🛠️ CONFIGURACIÓN DE API (ENFOQUE SENIOR)
+// Blindaje contra 'import.meta' undefined y fallback automático a Render
+const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
+            || "https://buscador-refacciones-backend.onrender.com/api";
+
+console.log("📦 Refacciones.js conectado a:", API);
 
 let textoBusqueda = "";
 let filtroStock = "";
-
 let paginaActual = 1;
 const LIMITE = 24;
 
+/**
+ * Carga los datos de la tabla desde el backend paginado.
+ */
 async function cargarTabla() {
   const contenedor = document.getElementById("cardsContainer");
-  if (!contenedor) return; // Guard clause para evitar errores si el DOM no está listo
+  if (!contenedor) return; // Guard clause profesional
   
   contenedor.innerHTML = `<p class="empty">Cargando...</p>`;
 
@@ -27,7 +33,7 @@ async function cargarTabla() {
     }
 
     data.rows.forEach(r => {
-      // Mantenemos tu lógica original de stock
+      // Mantenemos tu lógica de semaforización de stock
       const stockClass = r.cantidad === 0 ? "zero" : r.cantidad < 5 ? "low" : "ok";
 
       const card = document.createElement("div");
@@ -62,15 +68,19 @@ async function cargarTabla() {
 
     const paginador = document.getElementById("pagina");
     if (paginador) {
-      paginador.textContent = `Página ${paginaActual} / ${Math.ceil(data.total / LIMITE)}`;
+      const totalPaginas = Math.ceil(data.total / LIMITE) || 1;
+      paginador.textContent = `Página ${paginaActual} / ${totalPaginas}`;
     }
   } catch (error) {
-    console.error("Error en cargarTabla:", error);
+    console.error("❌ Error en cargarTabla:", error);
     contenedor.innerHTML = `<p class="empty">Error al conectar con el servidor</p>`;
   }
 }
 
-// EXPOSICIÓN GLOBAL: Necesario para que los 'onclick' del HTML funcionen
+// 🌍 EXPOSICIÓN GLOBAL
+// Al usar type="module", las funciones no son globales por defecto. 
+// Las exponemos a 'window' para no romper tus 'onclick' en el HTML.
+
 window.next = function() {
   paginaActual++;
   cargarTabla();
@@ -87,7 +97,15 @@ window.eliminar = function(id) {
   if (!confirm("¿Borrar esta refacción?")) return;
   fetch(`${API}/refacciones/${id}`, {
     method: "DELETE"
-  }).then(() => cargarTabla());
+  })
+  .then(res => {
+    if (res.ok) {
+      cargarTabla();
+    } else {
+      alert("Error al intentar eliminar el registro.");
+    }
+  })
+  .catch(err => console.error("Error en eliminación:", err));
 };
 
 window.verDetalle = function(id) {
@@ -95,20 +113,20 @@ window.verDetalle = function(id) {
 };
 
 window.buscar = function() {
-  textoBusqueda = document.getElementById("busqueda").value.toLowerCase();
-  filtroStock = document.getElementById("filtroStock").value;
+  const inputBusqueda = document.getElementById("busqueda");
+  const selectStock = document.getElementById("filtroStock");
+  
+  textoBusqueda = inputBusqueda ? inputBusqueda.value.toLowerCase() : "";
+  filtroStock = selectStock ? selectStock.value : "";
   paginaActual = 1;
   cargarTabla();
 };
 
 function obtenerClaseTitulo(maquina) {
   if (!maquina) return "titulo-default";
-  const nombre = maquina.toLowerCase().replace(/\s+/g, "-");
+  const nombre = maquina.toLowerCase().trim().replace(/\s+/g, "-");
   return "titulo-" + nombre;
 }
 
-// Eliminamos el bloque duplicado que tenías al final, ya que 'r' no existe ahí.
-// La lógica ya está integrada dentro del forEach arriba.
-
-// Ejecución inicial
+// Inicialización del DOM
 document.addEventListener("DOMContentLoaded", cargarTabla);
