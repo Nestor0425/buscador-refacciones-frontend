@@ -1,7 +1,7 @@
 // 🛠️ CONFIGURACIÓN DE API (ENFOQUE SENIOR)
 // Blindaje contra 'import.meta' undefined y fallback automático a Render
 const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
-            || "https://buscador-refacciones-backend.onrender.com/api";
+            || "https://buscador-refacciones-backend.onrender.com";
 
 console.log("📦 Refacciones.js conectado a:", API);
 

@@ -5,7 +5,7 @@
 (function () {
     // 1. BLINDAJE DE API: Sincronizado con el resto del proyecto
     const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
-                || "https://buscador-refacciones-backend.onrender.com/api";
+                || "https://buscador-refacciones-backend.onrender.com";
 
     /**
      * Valida la sesión de forma asíncrona y gestiona el estado global.

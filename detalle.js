@@ -3,7 +3,7 @@
  * Blindaje contra fallos de entorno y fallback automático.
  */
 const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
-            || "https://buscador-refacciones-backend.onrender.com/api";
+            || "https://buscador-refacciones-backend.onrender.com";
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");

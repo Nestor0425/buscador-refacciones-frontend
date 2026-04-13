@@ -1,6 +1,6 @@
 // 🛠️ CONFIGURACIÓN DE API (ENFOQUE SENIOR)
 const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
-            || "https://buscador-refacciones-backend.onrender.com/api";
+            || "https://buscador-refacciones-backend.onrender.com";
 
 console.log("🚀 Sistema conectado a:", API);
 
