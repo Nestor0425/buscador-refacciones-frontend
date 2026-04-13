@@ -3,7 +3,7 @@
  * Blindaje dinámico para entorno Vercel/Producción y Local.
  */
 const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
-            || "https://buscador-refacciones-backend.onrender.com/api";
+            || "https://buscador-refacciones-backend.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
     // Inicialización de eventos para enlaces de máquinas
