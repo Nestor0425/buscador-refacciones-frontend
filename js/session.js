@@ -1,88 +1,103 @@
-// session.js
+/**
+ * SISTEMA DE GESTIÓN DE SESIÓN (ENFOQUE SENIOR)
+ * Blindaje dinámico y persistencia robusta.
+ */
 (function () {
-  const API = "https://buscador-refaccionesbackend.onrender.com";
+    // 1. BLINDAJE DE API: Sincronizado con el resto del proyecto
+    const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
+                || "https://buscador-refacciones-backend.onrender.com/api";
 
-  /**
-   * Valida la sesión y guarda el usuario completo en localStorage
-   * @returns {Promise<Object|null>} Datos del usuario o null si no hay sesión
-   */
-  async function validarSesion() {
-    const token = localStorage.getItem("token");
-    const nombreElemento = document.getElementById("nombreUsuario");
+    /**
+     * Valida la sesión de forma asíncrona y gestiona el estado global.
+     */
+    async function validarSesion() {
+        const token = localStorage.getItem("token");
+        const nombreElemento = document.getElementById("nombreUsuario");
 
-    if (!token) {
-      window.location.replace("index.html");
-      return null;
+        if (!token) {
+            console.warn("⚠️ Sin token detectado, redirigiendo...");
+            ejecutarLogoutLimpio();
+            return null;
+        }
+
+        try {
+            // Llamada al endpoint de identidad
+            const response = await fetch(`${API}/me`, {
+                method: 'GET',
+                headers: { 
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) throw new Error("Sesión expirada o servidor no disponible");
+
+            const data = await response.json();
+
+            // Guardado seguro del objeto usuario completo
+            localStorage.setItem("usuario", JSON.stringify(data));
+
+            // Actualización de UI segura
+            if (nombreElemento) {
+                nombreElemento.textContent = data.nombre || 'Usuario';
+            }
+
+            return data;
+        } catch (error) {
+            console.error("❌ Fallo en validación de sesión:", error.message);
+            ejecutarLogoutLimpio();
+            return null;
+        }
     }
 
-    try {
-      const response = await fetch(`${API}/me`, {
-        headers: { Authorization: "Bearer " + token }
-      });
-
-      if (!response.ok) throw new Error();
-
-      const data = await response.json();
-
-      // Guardar usuario completo en localStorage
-      localStorage.setItem("usuario", JSON.stringify(data));
-
-      // Mostrar nombre si el elemento existe
-      if (nombreElemento) nombreElemento.textContent = data.nombre;
-
-      return data;
-    } catch (error) {
-      console.log("Token inválido o /me incorrecto", error);
-      // Limpiar todo y redirigir al login
-      localStorage.removeItem("token");
-      localStorage.removeItem("usuario");
-      window.location.replace("index.html");
-      return null;
+    /**
+     * Limpia el almacenamiento y redirige al inicio de forma atómica.
+     */
+    function ejecutarLogoutLimpio() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
+        // Evitamos bucles de redirección si ya estamos en index
+        if (!window.location.pathname.endsWith("index.html") && window.location.pathname !== "/") {
+            window.location.replace("index.html");
+        }
     }
-  }
 
-  /**
-   * Configura el botón de logout
-   */
-  function configurarLogout() {
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (!logoutBtn) return;
+    /**
+     * Configura el listener del botón de salida.
+     */
+    function configurarLogout() {
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.onclick = (e) => {
+                e.preventDefault();
+                ejecutarLogoutLimpio();
+            };
+        }
+    }
 
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("usuario");
-      window.location.replace("index.html");
+    /**
+     * Recupera y parsea el usuario de forma segura.
+     */
+    function obtenerUsuario() {
+        try {
+            const usuarioStr = localStorage.getItem("usuario");
+            return usuarioStr ? JSON.parse(usuarioStr) : null;
+        } catch (e) {
+            console.error("Error al parsear usuario de localStorage");
+            return null;
+        }
+    }
+
+    // Inicialización automática al cargar el DOM
+    document.addEventListener("DOMContentLoaded", () => {
+        validarSesion();
+        configurarLogout();
     });
-  }
 
-  /**
-   * Recupera el usuario desde localStorage
-   * @returns {Object|null} Usuario o null si no hay
-   */
-  function obtenerUsuario() {
-    const usuarioStr = localStorage.getItem("usuario");
-    if (!usuarioStr) return null;
-    try {
-      return JSON.parse(usuarioStr);
-    } catch {
-      return null;
-    }
-  }
-
-  // Al cargar el DOM
-  document.addEventListener("DOMContentLoaded", () => {
-    validarSesion();
-    configurarLogout();
-  });
-
-  // Exponer función global para otros scripts
-  window.Sesion = {
-    validar: validarSesion,
-    logout: () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("usuario");
-      window.location.replace("index.html");
-    },
-    obtenerUsuario
-  };
+    // Exposición de API pública del módulo
+    window.Sesion = {
+        validar: validarSesion,
+        logout: ejecutarLogoutLimpio,
+        obtenerUsuario: obtenerUsuario
+    };
 })();
