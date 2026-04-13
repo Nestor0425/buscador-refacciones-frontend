@@ -8,25 +8,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const token = localStorage.getItem("token");
     
-    // 1. Verificación de sesión existente al cargar la página
+    // 1. Verificación de sesión existente (MEJORADO)
     if (token) {
         try {
             const res = await fetch(`${API}/me`, {
-                headers: { "Authorization": "Bearer " + token }
+                headers: { "Authorization": `Bearer ${token}` }
             });
 
             if (res.ok) {
                 const usuario = await res.json();
                 if (usuario && usuario.id) {
-                    window.location.href = "Nadd.html";
+                    // Solo redirigimos si no estamos ya en la página de destino
+                    if (!window.location.pathname.includes("Nadd.html")) {
+                        window.location.replace("Nadd.html");
+                    }
                     return;
                 }
-            } else {
+            } else if (res.status === 401 || res.status === 403) {
+                // Solo limpiamos si el servidor confirma explícitamente que el token no vale
                 limpiarDatosSesion();
             }
         } catch (err) {
-            console.error("⚠️ Error verificando sesión:", err);
-            limpiarDatosSesion();
+            // Si hay un error de red (CORS, servidor caído), NO limpiamos la sesión.
+            // Esto evita que un parpadeo del internet saque al usuario.
+            console.error("⚠️ Error de conexión al verificar sesión:", err);
         }
     }
 
@@ -36,6 +41,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 2. Lógica de inicio de sesión
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        
+        // Feedback visual: deshabilitar botón para evitar múltiples clics
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
 
         const correoInput = document.getElementById("email").value.trim();
         const passwordInput = document.getElementById("password").value;
@@ -44,22 +53,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             const response = await fetch(`${API}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // 🔐 BLINDAJE SENIOR: Enviamos ambos nombres de campo para asegurar 
-                // compatibilidad total con el controlador del backend.
                 body: JSON.stringify({ 
-                    email: correoInput,    // Estándar para la base de datos
-                    correo: correoInput,   // Alternativa por si el backend usa req.body.correo
+                    email: correoInput,
                     password: passwordInput 
                 })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                // Si el backend envía un mensaje específico lo usamos, si no, el genérico
-                throw new Error(errorData.mensaje || errorData.message || "Credenciales incorrectas");
-            }
-
             const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || data.mensaje || "Credenciales incorrectas");
+            }
 
             // 💾 Persistencia de sesión
             localStorage.setItem("token", data.token);
@@ -67,20 +71,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             localStorage.setItem("rol", data.rol || data.user?.rol || "");
 
             console.log("✅ Sesión iniciada correctamente");
-            window.location.href = "Nadd.html";
+            
+            // Usamos replace para que el usuario no pueda volver atrás al login con el botón del navegador
+            window.location.replace("Nadd.html");
 
         } catch (error) {
             alert(error.message);
             console.error("❌ Login Error:", error);
+            if (submitBtn) submitBtn.disabled = false;
         }
     });
 });
 
 /**
- * Función auxiliar para limpiar el almacenamiento de forma centralizada (DRY)
+ * Función auxiliar para limpiar el almacenamiento de forma centralizada
  */
 function limpiarDatosSesion() {
     localStorage.removeItem("token");
     localStorage.removeItem("nombre");
     localStorage.removeItem("rol");
+    // Opcional: localStorage.clear(); para una limpieza total
 }
