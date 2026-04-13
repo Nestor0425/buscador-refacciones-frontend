@@ -1,5 +1,4 @@
 // 🛠️ CONFIGURACIÓN DE API (ENFOQUE SENIOR)
-// Usamos una validación para evitar que el sitio explote si Vite no inyecta la variable.
 const API = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) 
             || "https://buscador-refacciones-backend.onrender.com/api";
 
@@ -9,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const token = localStorage.getItem("token");
     
-    // Verificación de sesión existente al cargar la página
+    // 1. Verificación de sesión existente al cargar la página
     if (token) {
         try {
             const res = await fetch(`${API}/me`, {
@@ -23,7 +22,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     return;
                 }
             } else {
-                // Si el token no es válido, limpiamos de forma centralizada
                 limpiarDatosSesion();
             }
         } catch (err) {
@@ -35,42 +33,52 @@ document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("loginForm");
     if (!form) return;
 
+    // 2. Lógica de inicio de sesión
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const correo = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+        const correoInput = document.getElementById("email").value.trim();
+        const passwordInput = document.getElementById("password").value;
 
         try {
             const response = await fetch(`${API}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: correo, password })
+                // 🔐 BLINDAJE SENIOR: Enviamos ambos nombres de campo para asegurar 
+                // compatibilidad total con el controlador del backend.
+                body: JSON.stringify({ 
+                    email: correoInput,    // Estándar para la base de datos
+                    correo: correoInput,   // Alternativa por si el backend usa req.body.correo
+                    password: passwordInput 
+                })
             });
 
             if (!response.ok) {
-                // Intentamos obtener el error real del backend si existe
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || "Credenciales incorrectas");
+                // Si el backend envía un mensaje específico lo usamos, si no, el genérico
+                throw new Error(errorData.mensaje || errorData.message || "Credenciales incorrectas");
             }
 
             const data = await response.json();
 
-            // 🔐 Guardamos sesión de forma segura
+            // 💾 Persistencia de sesión
             localStorage.setItem("token", data.token);
-            localStorage.setItem("nombre", data.nombre || "");
-            localStorage.setItem("rol", data.rol || "");
+            localStorage.setItem("nombre", data.nombre || data.user?.nombre || "");
+            localStorage.setItem("rol", data.rol || data.user?.rol || "");
 
+            console.log("✅ Sesión iniciada correctamente");
             window.location.href = "Nadd.html";
 
         } catch (error) {
-            alert(error.message || "Error al iniciar sesión");
+            alert(error.message);
             console.error("❌ Login Error:", error);
         }
     });
 });
 
-// Función auxiliar (DRY: Don't Repeat Yourself) para limpiar el storage
+/**
+ * Función auxiliar para limpiar el almacenamiento de forma centralizada (DRY)
+ */
 function limpiarDatosSesion() {
     localStorage.removeItem("token");
     localStorage.removeItem("nombre");
